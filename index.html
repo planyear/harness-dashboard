@@ -1,1 +1,838 @@
-test
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BEACON EPIC Dashboard - SR + TS + BC</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface-hover: #222533;
+      --border: #2a2d3a;
+      --text: #e1e4ed;
+      --text-dim: #8b8fa3;
+      --text-muted: #5c6078;
+      --accent: #6c7ee1;
+      --accent-glow: rgba(108, 126, 225, 0.15);
+      --green: #34d399;
+      --green-bg: rgba(52, 211, 153, 0.12);
+      --yellow: #fbbf24;
+      --yellow-bg: rgba(251, 191, 36, 0.12);
+      --red: #f87171;
+      --red-bg: rgba(248, 113, 113, 0.12);
+      --blue: #60a5fa;
+      --blue-bg: rgba(96, 165, 250, 0.12);
+      --cyan: #22d3ee;
+      --cyan-bg: rgba(34, 211, 238, 0.12);
+      --purple: #a78bfa;
+      --purple-bg: rgba(167, 139, 250, 0.12);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    .header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+      color: white;
+    }
+
+    .header h1 {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .header h1 span {
+      color: var(--text-dim);
+      font-weight: 400;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .last-updated {
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    .refresh-btn {
+      background: var(--surface-hover);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.15s;
+    }
+
+    .refresh-btn:hover {
+      background: var(--border);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px 32px;
+    }
+
+    /* Summary cards */
+    .summary-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .summary-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .summary-card .label {
+      font-size: 13px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .summary-card .value {
+      font-size: 32px;
+      font-weight: 700;
+    }
+
+    .summary-card .sub {
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    .summary-card.total .value { color: var(--text); }
+    .summary-card.merged .value { color: var(--green); }
+    .summary-card.active .value { color: var(--yellow); }
+    .summary-card.remaining .value { color: var(--text-dim); }
+
+    /* Phase progress */
+    .section-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+    }
+
+    .phases-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .phase-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .phase-card:hover {
+      border-color: var(--accent);
+      background: var(--surface-hover);
+    }
+
+    .phase-card.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent);
+    }
+
+    .phase-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .phase-name {
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .phase-badge {
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    .phase-badge.not-started { background: var(--surface-hover); color: var(--text-dim); }
+    .phase-badge.in-progress { background: var(--yellow-bg); color: var(--yellow); }
+    .phase-badge.complete { background: var(--green-bg); color: var(--green); }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.5s ease;
+    }
+
+    .progress-bar-fill.green { background: var(--green); }
+    .progress-bar-fill.yellow { background: var(--yellow); }
+
+    .phase-stats {
+      display: flex;
+      gap: 16px;
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    .phase-stats .stat {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .dot.green { background: var(--green); }
+    .dot.yellow { background: var(--yellow); }
+    .dot.gray { background: var(--text-muted); }
+    .dot.blue { background: var(--blue); }
+
+    /* Task table */
+    .tasks-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 32px;
+    }
+
+    .tasks-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .tasks-header h2 {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--bg);
+      border-radius: 6px;
+      padding: 2px;
+    }
+
+    .filter-tab {
+      padding: 5px 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: var(--text-dim);
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .filter-tab:hover { color: var(--text); }
+    .filter-tab.active { background: var(--surface); color: var(--text); }
+
+    .task-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .task-table th {
+      text-align: left;
+      padding: 10px 20px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+
+    .task-table td {
+      padding: 12px 20px;
+      font-size: 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    .task-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .task-table tr:hover td {
+      background: var(--surface-hover);
+    }
+
+    .task-id {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 13px;
+      color: var(--cyan);
+      font-weight: 500;
+    }
+
+    .task-title {
+      font-weight: 500;
+    }
+
+    .task-deps {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .status-pill.merged { background: var(--green-bg); color: var(--green); }
+    .status-pill.in_progress { background: var(--yellow-bg); color: var(--yellow); }
+    .status-pill.in_review, .status-pill.pr_ready { background: var(--cyan-bg); color: var(--cyan); }
+    .status-pill.not_started { background: var(--surface-hover); color: var(--text-muted); }
+    .status-pill.blocked_by_BE { background: var(--red-bg); color: var(--red); }
+    .status-pill.na { background: var(--surface-hover); color: var(--text-muted); }
+
+    .assignee {
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    .mode-badge {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: 600;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
+
+    .mode-badge.A { background: var(--green-bg); color: var(--green); }
+    .mode-badge.B { background: var(--blue-bg); color: var(--blue); }
+    .mode-badge.NA { background: var(--surface-hover); color: var(--text-muted); }
+
+    /* Dependency graph */
+    .deps-blocked {
+      font-size: 12px;
+      color: var(--red);
+      font-style: italic;
+    }
+
+    /* Empty state */
+    .empty-state {
+      padding: 40px;
+      text-align: center;
+      color: var(--text-dim);
+    }
+
+    /* Loading */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 400px;
+      color: var(--text-dim);
+    }
+
+    .loading-spinner {
+      width: 24px;
+      height: 24px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 12px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Error */
+    .error-box {
+      background: var(--red-bg);
+      border: 1px solid rgba(248, 113, 113, 0.3);
+      border-radius: 8px;
+      padding: 16px 20px;
+      color: var(--red);
+      margin: 24px 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .summary-row { grid-template-columns: repeat(2, 1fr); }
+      .phases-grid { grid-template-columns: 1fr; }
+      .container { padding: 16px; }
+      .header { padding: 16px; }
+      .task-table { font-size: 13px; }
+      .task-table th, .task-table td { padding: 8px 12px; }
+    }
+
+    /* Phase 0 vs Phase 1-6 distinction */
+    .dual-status {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .dual-status .side-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    /* Overall progress bar */
+    .overall-progress {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .overall-progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .overall-progress-header .label {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .overall-progress-header .pct {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .overall-bar {
+      width: 100%;
+      height: 10px;
+      background: var(--border);
+      border-radius: 5px;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .overall-bar .segment {
+      height: 100%;
+      transition: width 0.5s ease;
+    }
+
+    .overall-bar .segment.merged { background: var(--green); }
+    .overall-bar .segment.active { background: var(--yellow); }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <div class="logo">B</div>
+      <h1>BEACON EPIC Dashboard <span>/ SR + TS + BC</span></h1>
+    </div>
+    <div class="header-right">
+      <span class="last-updated" id="lastUpdated"></span>
+      <button class="refresh-btn" onclick="loadData()">Refresh</button>
+    </div>
+  </div>
+
+  <div class="container" id="app">
+    <div class="loading">
+      <div class="loading-spinner"></div>
+      Loading harness.json...
+    </div>
+  </div>
+
+  <script>
+    let data = null;
+    let selectedPhase = null;
+    let taskFilter = 'all';
+
+    async function loadData() {
+      try {
+        const resp = await fetch('harness.json?t=' + Date.now());
+        data = await resp.json();
+        document.getElementById('lastUpdated').textContent = 'Updated: ' + new Date().toLocaleString();
+        render();
+      } catch (e) {
+        document.getElementById('app').innerHTML =
+          '<div class="error-box">Failed to load harness.json. Make sure it is in the same directory as this file.<br><br>Error: ' + e.message + '</div>';
+      }
+    }
+
+    function getTaskStatus(task) {
+      if (task.be) {
+        const beS = task.be.status;
+        const feS = task.fe ? task.fe.status : 'N/A';
+        if (beS === 'merged' && (feS === 'merged' || feS === 'N/A')) return 'merged';
+        if (beS === 'not_started' && (feS === 'not_started' || feS === 'blocked_by_BE' || feS === 'N/A')) return 'not_started';
+        return 'in_progress';
+      }
+      return task.status;
+    }
+
+    function getPhaseStats(phaseNum) {
+      const tasks = data.tasks.filter(t => t.phase === phaseNum);
+      const total = tasks.length;
+      let merged = 0, active = 0;
+      tasks.forEach(t => {
+        const s = getTaskStatus(t);
+        if (s === 'merged') merged++;
+        else if (s === 'in_progress' || s === 'in_review' || s === 'pr_ready') active++;
+      });
+      return { total, merged, active, remaining: total - merged - active };
+    }
+
+    function getOverallStats() {
+      let total = 0, merged = 0, active = 0;
+      for (const p of Object.keys(data.phases)) {
+        const s = getPhaseStats(parseInt(p));
+        total += s.total;
+        merged += s.merged;
+        active += s.active;
+      }
+      return { total, merged, active, remaining: total - merged - active };
+    }
+
+    function checkDeps(task) {
+      if (!task.depends_on || task.depends_on.length === 0) return { met: true, blockers: [] };
+      const blockers = [];
+      for (const dep of task.depends_on) {
+        if (dep.startsWith('PHASE-') && dep.endsWith('-COMPLETE')) {
+          const pn = dep.replace('PHASE-', '').replace('-COMPLETE', '');
+          const ps = data.phases[pn];
+          if (!ps || ps.status !== 'complete') blockers.push(dep);
+        } else {
+          const depTask = data.tasks.find(t => t.id === dep);
+          if (depTask && getTaskStatus(depTask) !== 'merged') blockers.push(dep);
+        }
+      }
+      return { met: blockers.length === 0, blockers };
+    }
+
+    function statusPill(status) {
+      const labels = {
+        merged: 'Merged',
+        in_progress: 'In Progress',
+        in_review: 'In Review',
+        pr_ready: 'PR Ready',
+        not_started: 'Not Started',
+        blocked_by_BE: 'Blocked by BE',
+        'N/A': 'N/A'
+      };
+      const cls = status === 'N/A' ? 'na' : status;
+      return `<span class="status-pill ${cls}">${labels[status] || status}</span>`;
+    }
+
+    function render() {
+      const overall = getOverallStats();
+      const overallPct = overall.total > 0 ? Math.round(overall.merged / overall.total * 100) : 0;
+      const mergedWidth = overall.total > 0 ? (overall.merged / overall.total * 100) : 0;
+      const activeWidth = overall.total > 0 ? (overall.active / overall.total * 100) : 0;
+
+      let html = '';
+
+      // Summary cards
+      html += `
+        <div class="summary-row">
+          <div class="summary-card total">
+            <div class="label">Total Tasks</div>
+            <div class="value">${overall.total}</div>
+            <div class="sub">${Object.keys(data.phases).length} phases</div>
+          </div>
+          <div class="summary-card merged">
+            <div class="label">Completed</div>
+            <div class="value">${overall.merged}</div>
+            <div class="sub">${overallPct}% done</div>
+          </div>
+          <div class="summary-card active">
+            <div class="label">In Progress</div>
+            <div class="value">${overall.active}</div>
+            <div class="sub">Active right now</div>
+          </div>
+          <div class="summary-card remaining">
+            <div class="label">Remaining</div>
+            <div class="value">${overall.remaining}</div>
+            <div class="sub">Not yet started</div>
+          </div>
+        </div>
+      `;
+
+      // Overall progress
+      html += `
+        <div class="overall-progress">
+          <div class="overall-progress-header">
+            <span class="label">Overall Progress</span>
+            <span class="pct">${overallPct}%</span>
+          </div>
+          <div class="overall-bar">
+            <div class="segment merged" style="width: ${mergedWidth}%"></div>
+            <div class="segment active" style="width: ${activeWidth}%"></div>
+          </div>
+        </div>
+      `;
+
+      // Phase cards
+      html += '<div class="section-title">Phases</div>';
+      html += '<div class="phases-grid">';
+      const phaseKeys = Object.keys(data.phases).sort((a, b) => parseInt(a) - parseInt(b));
+      for (const pk of phaseKeys) {
+        const pn = parseInt(pk);
+        const phase = data.phases[pk];
+        const stats = getPhaseStats(pn);
+        const pct = stats.total > 0 ? Math.round(stats.merged / stats.total * 100) : 0;
+
+        let badgeClass = 'not-started';
+        if (phase.status === 'complete') badgeClass = 'complete';
+        else if (stats.active > 0 || stats.merged > 0) badgeClass = 'in-progress';
+
+        const isActive = selectedPhase === pn;
+
+        html += `
+          <div class="phase-card ${isActive ? 'active' : ''}" onclick="selectPhase(${pn})">
+            <div class="phase-header">
+              <span class="phase-name">Phase ${pn}: ${phase.name}</span>
+              <span class="phase-badge ${badgeClass}">${badgeClass === 'not-started' ? 'Not Started' : badgeClass === 'in-progress' ? 'In Progress' : 'Complete'}</span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill green" style="width: ${pct}%"></div>
+            </div>
+            <div class="phase-stats">
+              <span class="stat"><span class="dot green"></span> ${stats.merged} merged</span>
+              <span class="stat"><span class="dot yellow"></span> ${stats.active} active</span>
+              <span class="stat"><span class="dot gray"></span> ${stats.remaining} remaining</span>
+            </div>
+          </div>
+        `;
+      }
+      html += '</div>';
+
+      // Task table
+      const phaseLabel = selectedPhase !== null ? `Phase ${selectedPhase} Tasks` : 'All Tasks';
+      html += `
+        <div class="tasks-section">
+          <div class="tasks-header">
+            <h2>${phaseLabel}</h2>
+            <div class="filter-tabs">
+              <button class="filter-tab ${taskFilter === 'all' ? 'active' : ''}" onclick="setFilter('all')">All</button>
+              <button class="filter-tab ${taskFilter === 'active' ? 'active' : ''}" onclick="setFilter('active')">Active</button>
+              <button class="filter-tab ${taskFilter === 'ready' ? 'active' : ''}" onclick="setFilter('ready')">Ready</button>
+              <button class="filter-tab ${taskFilter === 'blocked' ? 'active' : ''}" onclick="setFilter('blocked')">Blocked</button>
+            </div>
+          </div>
+      `;
+
+      let tasks = data.tasks;
+      if (selectedPhase !== null) {
+        tasks = tasks.filter(t => t.phase === selectedPhase);
+      }
+
+      // Apply filter
+      tasks = tasks.filter(t => {
+        const s = getTaskStatus(t);
+        const deps = checkDeps(t);
+        if (taskFilter === 'active') return s === 'in_progress' || s === 'in_review' || s === 'pr_ready';
+        if (taskFilter === 'ready') return s === 'not_started' && deps.met;
+        if (taskFilter === 'blocked') return s === 'not_started' && !deps.met;
+        return true;
+      });
+
+      if (tasks.length === 0) {
+        html += '<div class="empty-state">No tasks match the current filter.</div>';
+      } else {
+        // Split tasks by type for rendering
+        const p0Tasks = tasks.filter(t => t.phase === 0);
+        const storyTasks = tasks.filter(t => t.phase > 0);
+
+        // Phase 0 table (if any)
+        if (p0Tasks.length > 0) {
+          if (storyTasks.length > 0) {
+            html += '<div style="padding: 16px 20px 0; font-size: 14px; font-weight: 600; color: var(--text-dim);">Phase 0: Infrastructure</div>';
+          }
+          html += `
+            <table class="task-table">
+              <thead>
+                <tr>
+                  <th>Task</th>
+                  <th>Description</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Assigned</th>
+                  <th>Dependencies</th>
+                </tr>
+              </thead>
+              <tbody>
+          `;
+          for (const t of p0Tasks) {
+            const deps = checkDeps(t);
+            const depsHtml = !t.depends_on || t.depends_on.length === 0
+              ? '<span class="task-deps">None</span>'
+              : deps.met
+                ? `<span class="task-deps" style="color: var(--green);">${t.depends_on.join(', ')}</span>`
+                : `<span class="deps-blocked">${deps.blockers.join(', ')}</span>`;
+
+            html += `
+              <tr>
+                <td><span class="task-id">${t.id}</span></td>
+                <td><span class="task-title">${t.title}</span></td>
+                <td><span class="assignee">${t.role || '-'}</span></td>
+                <td>${statusPill(t.status)}</td>
+                <td><span class="assignee">${t.assigned_to || '-'}</span></td>
+                <td>${depsHtml}</td>
+              </tr>
+            `;
+          }
+          html += '</tbody></table>';
+        }
+
+        // Phase 1-6 stories table (if any)
+        if (storyTasks.length > 0) {
+          if (p0Tasks.length > 0) {
+            html += '<div style="padding: 16px 20px 0; border-top: 1px solid var(--border); font-size: 14px; font-weight: 600; color: var(--text-dim);">Stories (Phase 1-6)</div>';
+          }
+          html += `
+            <table class="task-table">
+              <thead>
+                <tr>
+                  <th>Story</th>
+                  <th>Description</th>
+                  <th>Phase</th>
+                  <th>Mode</th>
+                  <th>Stream</th>
+                  <th>BE Status</th>
+                  <th>FE Status</th>
+                  <th>Assigned</th>
+                  <th>Dependencies</th>
+                </tr>
+              </thead>
+              <tbody>
+          `;
+          for (const t of storyTasks) {
+            const deps = checkDeps(t);
+            const depsHtml = !t.depends_on || t.depends_on.length === 0
+              ? '<span class="task-deps">None</span>'
+              : deps.met
+                ? `<span class="task-deps" style="color: var(--green);">${t.depends_on.join(', ')}</span>`
+                : `<span class="deps-blocked">${deps.blockers.join(', ')}</span>`;
+
+            const feStatus = t.fe ? t.fe.status : 'N/A';
+            const assigned = (t.be && t.be.assigned_to) || (t.fe && t.fe.assigned_to) || '-';
+            html += `
+              <tr>
+                <td><span class="task-id">${t.id}</span></td>
+                <td><span class="task-title">${t.title}</span></td>
+                <td><span class="assignee">P${t.phase}</span></td>
+                <td><span class="mode-badge ${t.mode === 'N/A' ? 'NA' : t.mode}">${t.mode}</span></td>
+                <td><span class="assignee">${t.stream || '-'}</span></td>
+                <td>${statusPill(t.be.status)}</td>
+                <td>${statusPill(feStatus)}</td>
+                <td><span class="assignee">${assigned}</span></td>
+                <td>${depsHtml}</td>
+              </tr>
+            `;
+          }
+          html += '</tbody></table>';
+        }
+      }
+
+      html += '</div>';
+
+      // Feature branch info
+      html += `
+        <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 13px;">
+          Feature branch: <code style="color: var(--cyan);">${data.feature_branch}</code>
+          &nbsp;&middot;&nbsp;
+          ${data.tasks.length} tasks across ${Object.keys(data.phases).length} phases
+        </div>
+      `;
+
+      document.getElementById('app').innerHTML = html;
+    }
+
+    function selectPhase(pn) {
+      selectedPhase = selectedPhase === pn ? null : pn;
+      taskFilter = 'all';
+      render();
+    }
+
+    function setFilter(f) {
+      taskFilter = f;
+      render();
+    }
+
+    // Auto-refresh every 60 seconds
+    setInterval(loadData, 60000);
+
+    // Initial load
+    loadData();
+  </script>
+</body>
+</html>
