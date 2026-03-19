@@ -1,6 +1,6 @@
 {
   "epic": "sr-ts-bc",
-  "feature_branch": "upgrade/benefit-class",
+  "feature_branch": "upgrade/harness-engineering",
   "repos": {
     "platform": "../platform",
     "unified-portal": "../unified-portal"
@@ -18,7 +18,7 @@
   "phases": {
     "0": {
       "name": "Infrastructure",
-      "status": "in_progress"
+      "status": "complete"
     },
     "1": {
       "name": "Foundation",
@@ -185,7 +185,7 @@
       "repo": "platform",
       "role": "implement-be",
       "depends_on": [],
-      "status": "in_review",
+      "status": "merged",
       "assigned_to": "agent",
       "pr_url": "platform #43"
     },
@@ -288,7 +288,7 @@
       "repo": "unified-portal",
       "role": "implement-fe",
       "depends_on": [],
-      "status": "not_started",
+      "status": "merged",
       "assigned_to": "Shanil",
       "pr_url": null
     },
@@ -312,7 +312,7 @@
       "depends_on": [
         "0.21"
       ],
-      "status": "not_started",
+      "status": "merged",
       "assigned_to": "Shanil",
       "pr_url": null
     },
@@ -341,7 +341,7 @@
         "0.6",
         "0.8"
       ],
-      "status": "in_review",
+      "status": "merged",
       "assigned_to": "agent",
       "pr_url": "platform #53"
     },
@@ -358,7 +358,7 @@
         "0.15",
         "0.16"
       ],
-      "status": "in_review",
+      "status": "merged",
       "assigned_to": "agent",
       "pr_url": "BB (pending)"
     },
