@@ -542,13 +542,17 @@
     function getPhaseStats(phaseNum) {
       const tasks = data.tasks.filter(t => t.phase === phaseNum);
       const total = tasks.length;
-      let merged = 0, active = 0;
+      let merged = 0, active = 0, beMerged = 0, feMerged = 0;
       tasks.forEach(t => {
         const s = getTaskStatus(t);
         if (s === 'merged') merged++;
         else if (s === 'in_progress' || s === 'in_review' || s === 'pr_ready') active++;
+        if (t.be && t.be.status === 'merged') beMerged++;
+        if (t.fe && t.fe.status === 'merged') feMerged++;
+        // Phase 0 tasks have flat status
+        if (!t.be && !t.fe && t.status === 'merged') { beMerged++; }
       });
-      return { total, merged, active, remaining: total - merged - active };
+      return { total, merged, active, remaining: total - merged - active, beMerged, feMerged };
     }
 
     function getOverallStats() {
@@ -652,7 +656,7 @@
 
         let badgeClass = 'not-started';
         if (phase.status === 'complete') badgeClass = 'complete';
-        else if (stats.active > 0 || stats.merged > 0) badgeClass = 'in-progress';
+        else if (stats.active > 0 || stats.merged > 0 || stats.beMerged > 0 || stats.feMerged > 0) badgeClass = 'in-progress';
 
         const isActive = selectedPhase === pn;
 
@@ -666,7 +670,11 @@
               <div class="progress-bar-fill green" style="width: ${pct}%"></div>
             </div>
             <div class="phase-stats">
-              <span class="stat"><span class="dot green"></span> ${stats.merged} merged</span>
+              ${pn === 0
+                ? `<span class="stat"><span class="dot green"></span> ${stats.merged} merged</span>`
+                : `<span class="stat"><span class="dot green"></span> ${stats.beMerged} BE merged</span>
+                   <span class="stat"><span class="dot green"></span> ${stats.feMerged} FE merged</span>`
+              }
               <span class="stat"><span class="dot yellow"></span> ${stats.active} active</span>
               <span class="stat"><span class="dot gray"></span> ${stats.remaining} remaining</span>
             </div>
