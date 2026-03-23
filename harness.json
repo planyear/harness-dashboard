@@ -462,8 +462,8 @@
       "fe": {
         "repo": "unified-portal",
         "role": "implement-fe",
-        "status": "blocked_by_BE",
-        "assigned_to": null,
+        "status": "in_progress",
+        "assigned_to": "prabodha",
         "pr_url": null
       },
       "depends_on": [
