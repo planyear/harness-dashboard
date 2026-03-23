@@ -783,6 +783,7 @@
                 ? `<span class="task-deps" style="color: var(--green);">${t.depends_on.join(', ')}</span>`
                 : `<span class="deps-blocked">${deps.blockers.join(', ')}</span>`;
 
+            const beStatus = t.be ? t.be.status : 'N/A';
             const feStatus = t.fe ? t.fe.status : 'N/A';
             const assigned = (t.be && t.be.assigned_to) || (t.fe && t.fe.assigned_to) || '-';
             html += `
@@ -792,7 +793,7 @@
                 <td><span class="assignee">P${t.phase}</span></td>
                 <td><span class="mode-badge ${t.mode === 'N/A' ? 'NA' : t.mode}">${t.mode}</span></td>
                 <td><span class="assignee">${t.stream || '-'}</span></td>
-                <td>${statusPill(t.be.status)}</td>
+                <td>${statusPill(beStatus)}</td>
                 <td>${statusPill(feStatus)}</td>
                 <td><span class="assignee">${assigned}</span></td>
                 <td>${depsHtml}</td>
