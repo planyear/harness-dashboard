@@ -516,15 +516,18 @@
     let selectedPhase = null;
     let taskFilter = 'all';
 
+    const HARNESS_DATA_URL = 'https://raw.githubusercontent.com/planyear/planyear-harness/main/harness.json';
+
     async function loadData() {
       try {
-        const resp = await fetch('harness.json?t=' + Date.now());
+        const resp = await fetch(HARNESS_DATA_URL + '?t=' + Date.now());
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
         data = await resp.json();
         document.getElementById('lastUpdated').textContent = 'Updated: ' + new Date().toLocaleString();
         render();
       } catch (e) {
         document.getElementById('app').innerHTML =
-          '<div class="error-box">Failed to load harness.json. Make sure it is in the same directory as this file.<br><br>Error: ' + e.message + '</div>';
+          '<div class="error-box">Failed to load harness.json from planyear-harness repo.<br><br>Error: ' + e.message + '</div>';
       }
     }
 
