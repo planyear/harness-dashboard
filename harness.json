@@ -1,4 +1,5 @@
 {
+  "last_synced": "2026-03-23T10:50:00Z",
   "epic": "sr-ts-bc",
   "feature_branch": "upgrade/harness-engineering",
   "repos": {
@@ -12,6 +13,10 @@
     },
     "prabodha": {
       "stream": "B",
+      "machine": "16GB"
+    },
+    "shanil": {
+      "stream": "FE",
       "machine": "16GB"
     }
   },
@@ -423,20 +428,14 @@
       "id": "PY-12330",
       "phase": 1,
       "title": "Start renewal tier",
-      "mode": "A",
+      "mode": "FE-only",
       "stream": "TS",
-      "be": {
-        "repo": "platform",
-        "role": "implement-be",
-        "status": "not_started",
-        "assigned_to": null,
-        "pr_url": null
-      },
+      "be": null,
       "fe": {
         "repo": "unified-portal",
         "role": "implement-fe",
-        "status": "not_started",
-        "assigned_to": null,
+        "status": "in_progress",
+        "assigned_to": "shanil",
         "pr_url": null
       },
       "depends_on": [
@@ -456,9 +455,9 @@
       "be": {
         "repo": "platform",
         "role": "implement-be",
-        "status": "not_started",
-        "assigned_to": null,
-        "pr_url": null
+        "status": "merged",
+        "assigned_to": "prabodha",
+        "pr_url": "https://github.com/planyear/platform/pull/111"
       },
       "fe": {
         "repo": "unified-portal",
