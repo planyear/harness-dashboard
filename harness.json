@@ -466,6 +466,49 @@
         "assigned_to": "prabodha",
         "pr_url": null
       },
+      "gates": {
+        "1": {
+          "name": "API contract validation",
+          "after": "be",
+          "status": "passed",
+          "passed_at": "2026-03-23",
+          "checks": [
+            { "type": "test", "cmd": "./gradlew :services:ai-orchestration-service:test -x generateGitProperties --tests '*.TierConversionUtilSpec'", "desc": "TierConversionUtil unit tests (16)" },
+            { "type": "test", "cmd": "./gradlew :services:ai-orchestration-service:test -x generateGitProperties --tests '*.LLMToOfferedMedicalPlanVOConvertorSpec'", "desc": "VO convertor integration tests (10)" },
+            { "type": "test", "cmd": "./gradlew :services:renewal-service:test -x generateGitProperties --tests '*.OfferResourceSpec'", "desc": "OfferResource tests (3)" },
+            { "type": "test", "cmd": "./gradlew :services:renewal-service:test -x generateGitProperties --tests '*.TierMismatchIntegrationSpec'", "desc": "Integration test with mock LLM response" },
+            { "type": "human", "desc": "Human verified: converted premiums correct, original quote premiums preserved, sparkle metadata remapped" }
+          ]
+        },
+        "2": {
+          "name": "Plan review visual",
+          "after": "fe",
+          "status": "not_started",
+          "checks": [
+            { "type": "test", "cmd": "yarn test --run src/modules/renewals/components/AddOfferComponents", "desc": "Edit flow + modal Vitest tests (11)" },
+            { "type": "storybook", "desc": "Storybook stories match Figma: banners, reference panel, modal guidance (8 stories)" },
+            { "type": "human", "desc": "Human verified: visual match against Figma 117246-34580 and 120995-98111" }
+          ]
+        },
+        "3": {
+          "name": "Offer card visual",
+          "after": "fe",
+          "status": "not_started",
+          "checks": [
+            { "type": "test", "cmd": "yarn test --run src/modules/renewals/components/helperComponents/OfferCard", "desc": "OfferCard + finalized guards Vitest tests (14)" },
+            { "type": "storybook", "desc": "Storybook stories: mismatch banners, finalized guards (8 stories)" },
+            { "type": "human", "desc": "Human verified: offer card visual review" }
+          ]
+        },
+        "4": {
+          "name": "End-to-end",
+          "after": "fe",
+          "status": "not_started",
+          "checks": [
+            { "type": "human", "desc": "Upload mismatched quote, see conversion, fill blanks, approve, update plan param, finalized proposal guard" }
+          ]
+        }
+      },
       "depends_on": [
         "0.2",
         "0.5",
