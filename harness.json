@@ -404,15 +404,15 @@
       "be": {
         "repo": "platform",
         "role": "implement-be",
-        "status": "not_started",
-        "assigned_to": null,
+        "status": "in_progress",
+        "assigned_to": "prabodha",
         "pr_url": null
       },
       "fe": {
         "repo": "unified-portal",
         "role": "implement-fe",
-        "status": "not_started",
-        "assigned_to": null,
+        "status": "in_progress",
+        "assigned_to": "prabodha",
         "pr_url": null
       },
       "depends_on": [
@@ -473,11 +473,30 @@
           "status": "passed",
           "passed_at": "2026-03-23",
           "checks": [
-            { "type": "test", "cmd": "./gradlew :services:ai-orchestration-service:test -x generateGitProperties --tests '*.TierConversionUtilSpec'", "desc": "TierConversionUtil unit tests (16)" },
-            { "type": "test", "cmd": "./gradlew :services:ai-orchestration-service:test -x generateGitProperties --tests '*.LLMToOfferedMedicalPlanVOConvertorSpec'", "desc": "VO convertor integration tests (10)" },
-            { "type": "test", "cmd": "./gradlew :services:renewal-service:test -x generateGitProperties --tests '*.OfferResourceSpec'", "desc": "OfferResource tests (3)" },
-            { "type": "test", "cmd": "./gradlew :services:renewal-service:test -x generateGitProperties --tests '*.TierMismatchIntegrationSpec'", "desc": "Integration test with mock LLM response" },
-            { "type": "human", "desc": "Human verified: converted premiums correct, original quote premiums preserved, sparkle metadata remapped" }
+            {
+              "type": "test",
+              "cmd": "./gradlew :services:ai-orchestration-service:test -x generateGitProperties --tests '*.TierConversionUtilSpec'",
+              "desc": "TierConversionUtil unit tests (16)"
+            },
+            {
+              "type": "test",
+              "cmd": "./gradlew :services:ai-orchestration-service:test -x generateGitProperties --tests '*.LLMToOfferedMedicalPlanVOConvertorSpec'",
+              "desc": "VO convertor integration tests (10)"
+            },
+            {
+              "type": "test",
+              "cmd": "./gradlew :services:renewal-service:test -x generateGitProperties --tests '*.OfferResourceSpec'",
+              "desc": "OfferResource tests (3)"
+            },
+            {
+              "type": "test",
+              "cmd": "./gradlew :services:renewal-service:test -x generateGitProperties --tests '*.TierMismatchIntegrationSpec'",
+              "desc": "Integration test with mock LLM response"
+            },
+            {
+              "type": "human",
+              "desc": "Human verified: converted premiums correct, original quote premiums preserved, sparkle metadata remapped"
+            }
           ]
         },
         "2": {
@@ -485,9 +504,19 @@
           "after": "fe",
           "status": "not_started",
           "checks": [
-            { "type": "test", "cmd": "yarn test --run src/modules/renewals/components/AddOfferComponents", "desc": "Edit flow + modal Vitest tests (11)" },
-            { "type": "storybook", "desc": "Storybook stories match Figma: banners, reference panel, modal guidance (8 stories)" },
-            { "type": "human", "desc": "Human verified: visual match against Figma 117246-34580 and 120995-98111" }
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/renewals/components/AddOfferComponents",
+              "desc": "Edit flow + modal Vitest tests (11)"
+            },
+            {
+              "type": "storybook",
+              "desc": "Storybook stories match Figma: banners, reference panel, modal guidance (8 stories)"
+            },
+            {
+              "type": "human",
+              "desc": "Human verified: visual match against Figma 117246-34580 and 120995-98111"
+            }
           ]
         },
         "3": {
@@ -495,9 +524,19 @@
           "after": "fe",
           "status": "not_started",
           "checks": [
-            { "type": "test", "cmd": "yarn test --run src/modules/renewals/components/helperComponents/OfferCard", "desc": "OfferCard + finalized guards Vitest tests (14)" },
-            { "type": "storybook", "desc": "Storybook stories: mismatch banners, finalized guards (8 stories)" },
-            { "type": "human", "desc": "Human verified: offer card visual review" }
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/renewals/components/helperComponents/OfferCard",
+              "desc": "OfferCard + finalized guards Vitest tests (14)"
+            },
+            {
+              "type": "storybook",
+              "desc": "Storybook stories: mismatch banners, finalized guards (8 stories)"
+            },
+            {
+              "type": "human",
+              "desc": "Human verified: offer card visual review"
+            }
           ]
         },
         "4": {
@@ -505,7 +544,10 @@
           "after": "fe",
           "status": "not_started",
           "checks": [
-            { "type": "human", "desc": "Upload mismatched quote, see conversion, fill blanks, approve, update plan param, finalized proposal guard" }
+            {
+              "type": "human",
+              "desc": "Upload mismatched quote, see conversion, fill blanks, approve, update plan param, finalized proposal guard"
+            }
           ]
         }
       },
