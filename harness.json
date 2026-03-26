@@ -462,9 +462,9 @@
       "fe": {
         "repo": "unified-portal",
         "role": "implement-fe",
-        "status": "in_progress",
+        "status": "merged",
         "assigned_to": "prabodha",
-        "pr_url": null
+        "pr_url": "https://github.com/planyear/unified-portal/pull/55 https://github.com/planyear/unified-portal/pull/32"
       },
       "gates": {
         "1": {
@@ -502,12 +502,12 @@
         "2": {
           "name": "Plan review visual",
           "after": "fe",
-          "status": "not_started",
+          "status": "passed",
           "checks": [
             {
               "type": "test",
-              "cmd": "yarn test --run src/modules/renewals/components/AddOfferComponents",
-              "desc": "Edit flow + modal Vitest tests (11)"
+              "cmd": "yarn test --run src/modules/renewals/components/AddPlanDetailsModal/QuoteReferencePanel src/modules/renewals/components/AddPlanDetailsModal/TierMismatchGuidance src/modules/renewals/components/helperComponents/TierMismatchOfferBanner src/modules/renewals/utils/tierMismatchUtil",
+              "desc": "Tier mismatch Vitest tests (QuoteReferencePanel, TierMismatchGuidance, TierMismatchOfferBanner, tierMismatchUtil)"
             },
             {
               "type": "storybook",
@@ -517,12 +517,13 @@
               "type": "human",
               "desc": "Human verified: visual match against Figma 117246-34580 and 120995-98111"
             }
-          ]
+          ],
+          "passed_at": "2026-03-26"
         },
         "3": {
           "name": "Offer card visual",
           "after": "fe",
-          "status": "not_started",
+          "status": "passed",
           "checks": [
             {
               "type": "test",
@@ -537,18 +538,35 @@
               "type": "human",
               "desc": "Human verified: offer card visual review"
             }
-          ]
+          ],
+          "passed_at": "2026-03-26"
         },
         "4": {
           "name": "End-to-end",
           "after": "fe",
-          "status": "not_started",
+          "status": "passed",
           "checks": [
-            { "type": "e2e", "id": 1, "desc": "Upload 3-tier quote against 4-tier employer, verify mismatch banner and conversion" },
-            { "type": "e2e", "id": 2, "desc": "Upload matching tier quote, verify no banner, rates populated correctly" },
-            { "type": "e2e", "id": 3, "desc": "NY/VT employer with non-standard tier, verify warning banner and Standard 4-Tier requirement" },
-            { "type": "human", "desc": "Verify full flow visually matches acceptance criteria" }
-          ]
+            {
+              "type": "e2e",
+              "id": 1,
+              "desc": "Upload 3-tier quote against 4-tier employer, verify mismatch banner and conversion"
+            },
+            {
+              "type": "e2e",
+              "id": 2,
+              "desc": "Upload matching tier quote, verify no banner, rates populated correctly"
+            },
+            {
+              "type": "e2e",
+              "id": 3,
+              "desc": "NY/VT employer with non-standard tier, verify warning banner and Standard 4-Tier requirement"
+            },
+            {
+              "type": "human",
+              "desc": "Verify full flow visually matches acceptance criteria"
+            }
+          ],
+          "passed_at": "2026-03-26"
         }
       },
       "depends_on": [
