@@ -544,10 +544,10 @@
           "after": "fe",
           "status": "not_started",
           "checks": [
-            {
-              "type": "human",
-              "desc": "Upload mismatched quote, see conversion, fill blanks, approve, update plan param, finalized proposal guard"
-            }
+            { "type": "e2e", "id": 1, "desc": "Upload 3-tier quote against 4-tier employer, verify mismatch banner and conversion" },
+            { "type": "e2e", "id": 2, "desc": "Upload matching tier quote, verify no banner, rates populated correctly" },
+            { "type": "e2e", "id": 3, "desc": "NY/VT employer with non-standard tier, verify warning banner and Standard 4-Tier requirement" },
+            { "type": "human", "desc": "Verify full flow visually matches acceptance criteria" }
           ]
         }
       },
