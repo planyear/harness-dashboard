@@ -531,6 +531,8 @@
     }
 
     function getTaskStatus(task) {
+      // Task-level status overrides BE/FE when set to complete or verifying
+      if (task.status === 'complete' || task.status === 'verifying') return task.status;
       if (task.be) {
         const beS = task.be.status;
         const feS = task.fe ? task.fe.status : 'N/A';
@@ -540,7 +542,6 @@
         if (beS === 'not_started' && (feS === 'not_started' || feS === 'blocked_by_BE' || feS === 'N/A')) return 'not_started';
         return 'in_progress';
       }
-      if (task.status === 'complete' || task.status === 'verifying') return task.status;
       return task.status;
     }
 
