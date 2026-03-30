@@ -434,7 +434,7 @@
       "fe": {
         "repo": "unified-portal",
         "role": "implement-fe",
-        "status": "in_review",
+        "status": "merged",
         "assigned_to": "shanil",
         "pr_url": "https://github.com/planyear/unified-portal/pull/36"
       },
@@ -444,7 +444,8 @@
         "0.8",
         "0.14",
         "0.15"
-      ]
+      ],
+      "status": "merged"
     },
     {
       "id": "PY-12422",
