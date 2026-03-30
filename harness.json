@@ -404,15 +404,15 @@
       "be": {
         "repo": "platform",
         "role": "implement-be",
-        "status": "in_progress",
-        "assigned_to": "prabodha",
+        "status": "not_started",
+        "assigned_to": null,
         "pr_url": null
       },
       "fe": {
         "repo": "unified-portal",
         "role": "implement-fe",
-        "status": "in_progress",
-        "assigned_to": "prabodha",
+        "status": "not_started",
+        "assigned_to": null,
         "pr_url": null
       },
       "depends_on": [
