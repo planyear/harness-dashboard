@@ -542,7 +542,7 @@
         if (beS === 'not_started' && (feS === 'not_started' || feS === 'blocked_by_BE' || feS === 'N/A')) return 'not_started';
         return 'in_progress';
       }
-      return task.status;
+      return task.status || 'not_started';
     }
 
     function getPhaseStats(phaseNum) {
