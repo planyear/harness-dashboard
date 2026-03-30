@@ -354,7 +354,9 @@
       white-space: nowrap;
     }
 
+    .status-pill.complete { background: var(--green-bg); color: var(--green); border: 1px solid var(--green); }
     .status-pill.merged { background: var(--green-bg); color: var(--green); }
+    .status-pill.verifying { background: #332800; color: #ffa500; }
     .status-pill.in_progress { background: var(--yellow-bg); color: var(--yellow); }
     .status-pill.in_review, .status-pill.pr_ready { background: var(--cyan-bg); color: var(--cyan); }
     .status-pill.not_started { background: var(--surface-hover); color: var(--text-muted); }
@@ -532,10 +534,13 @@
       if (task.be) {
         const beS = task.be.status;
         const feS = task.fe ? task.fe.status : 'N/A';
-        if (beS === 'merged' && (feS === 'merged' || feS === 'N/A')) return 'merged';
+        if ((beS === 'complete' || beS === 'N/A') && (feS === 'complete' || feS === 'N/A')) return 'complete';
+        if ((beS === 'merged' || beS === 'complete' || beS === 'N/A') && (feS === 'merged' || feS === 'complete' || feS === 'N/A')) return 'merged';
+        if (beS === 'verifying' || feS === 'verifying') return 'verifying';
         if (beS === 'not_started' && (feS === 'not_started' || feS === 'blocked_by_BE' || feS === 'N/A')) return 'not_started';
         return 'in_progress';
       }
+      if (task.status === 'complete' || task.status === 'verifying') return task.status;
       return task.status;
     }
 
@@ -545,8 +550,9 @@
       let merged = 0, active = 0, beMerged = 0, feMerged = 0;
       tasks.forEach(t => {
         const s = getTaskStatus(t);
-        if (s === 'merged') merged++;
-        else if (s === 'in_progress' || s === 'in_review' || s === 'pr_ready') active++;
+        if (s === 'complete') merged++;
+        else if (s === 'merged') merged++;
+        else if (s === 'in_progress' || s === 'in_review' || s === 'pr_ready' || s === 'verifying') active++;
         if (t.be && t.be.status === 'merged') beMerged++;
         if (t.fe && t.fe.status === 'merged') feMerged++;
         // Phase 0 tasks have flat status
@@ -576,7 +582,8 @@
           if (!ps || ps.status !== 'complete') blockers.push(dep);
         } else {
           const depTask = data.tasks.find(t => t.id === dep);
-          if (depTask && getTaskStatus(depTask) !== 'merged') blockers.push(dep);
+          const depS = getTaskStatus(depTask);
+          if (depTask && depS !== 'merged' && depS !== 'complete') blockers.push(dep);
         }
       }
       return { met: blockers.length === 0, blockers };
@@ -584,7 +591,9 @@
 
     function statusPill(status) {
       const labels = {
+        complete: 'Complete',
         merged: 'Merged',
+        verifying: 'Verifying',
         in_progress: 'In Progress',
         in_review: 'In Review',
         pr_ready: 'PR Ready',
