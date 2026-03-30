@@ -447,6 +447,28 @@
       ]
     },
     {
+      "id": "PY-12422",
+      "phase": 1,
+      "title": "Combine Rates & Enrollments modal",
+      "mode": "FE-only",
+      "stream": "TS",
+      "be": null,
+      "fe": {
+        "repo": "unified-portal",
+        "role": "implement-fe",
+        "status": "not_started",
+        "assigned_to": "shanil",
+        "pr_url": null
+      },
+      "depends_on": [
+        "PY-12330",
+        "0.14",
+        "0.15",
+        "0.16"
+      ],
+      "notes": "BC-level enrollment sections (same/differential contributions) deferred to Phase 5+. Build for current aggregate enrollment behavior only."
+    },
+    {
       "id": "PY-12331",
       "phase": 1,
       "title": "Quote tier mismatch",
@@ -673,7 +695,8 @@
       },
       "depends_on": [
         "PY-12330",
-        "PY-12331"
+        "PY-12331",
+        "PY-12422"
       ]
     },
     {
