@@ -445,7 +445,59 @@
         "0.14",
         "0.15"
       ],
-      "status": "merged"
+      "notes": "Unscoped BE fix found during E2E: plan-service filterByFirstPlanPremiumType dropped N-Tier plans (BUG-003). Also small BE change to return mismatch tiers to FE. Platform PR: https://github.com/planyear/platform/pull/164",
+      "gates": {
+        "1": {
+          "name": "FE component tests",
+          "after": "fe",
+          "status": "passed",
+          "passed_at": "2026-03-29",
+          "checks": [
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/renewals/components/StartRenewalModal",
+              "desc": "StartRenewalModal Vitest tests (tier tags, mismatch banner, premium type dropdown)"
+            },
+            {
+              "type": "human",
+              "desc": "Human verified: visual match against Figma designs for tier tags, mismatch banners, and NY/VT locked dropdown"
+            }
+          ]
+        },
+        "2": {
+          "name": "End-to-end validation",
+          "after": "fe",
+          "status": "passed",
+          "passed_at": "2026-03-30",
+          "checks": [
+            {
+              "type": "e2e",
+              "id": 1,
+              "desc": "Suite A: Tier tags visible, no-plans message, correct tier derivation from rate discriminator (A1-A3)"
+            },
+            {
+              "type": "e2e",
+              "id": 2,
+              "desc": "Suite B: Draft state persistence — tier tags, mismatch banners, premium type dropdown preserved on reopen (B1, B3)"
+            },
+            {
+              "type": "e2e",
+              "id": 3,
+              "desc": "Suite C: Mismatch detection — mixed tiers, N-tier count, NY/VT SG locked dropdown, independent LOC validation, tooltips (C1, C3-C8)"
+            },
+            {
+              "type": "e2e",
+              "id": 4,
+              "desc": "Suite R: Regression — SG aligned (no banner/tags) and LG aligned across benefit classes (R1, R2)"
+            },
+            {
+              "type": "human",
+              "desc": "Human verified: 14/16 scenarios pass across 7 sessions, 3 employers. 2 skipped (B2/C2: edit rates form not yet built). 4 bugs found and fixed."
+            }
+          ]
+        }
+      },
+      "status": "complete"
     },
     {
       "id": "PY-12422",
