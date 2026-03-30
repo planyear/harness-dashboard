@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Harness Engineering Guide</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface-hover: #222533;
+      --border: #2a2d3a;
+      --text: #e1e4ed;
+      --text-dim: #8b8fa3;
+      --text-muted: #5c6078;
+      --accent: #6c7ee1;
+      --accent-glow: rgba(108, 126, 225, 0.15);
+      --green: #34d399;
+      --green-bg: rgba(52, 211, 153, 0.12);
+      --yellow: #fbbf24;
+      --yellow-bg: rgba(251, 191, 36, 0.12);
+      --red: #f87171;
+      --red-bg: rgba(248, 113, 113, 0.12);
+      --blue: #60a5fa;
+      --blue-bg: rgba(96, 165, 250, 0.12);
+      --cyan: #22d3ee;
+      --cyan-bg: rgba(34, 211, 238, 0.12);
+      --purple: #a78bfa;
+      --purple-bg: rgba(167, 139, 250, 0.12);
+      --orange: #ffa500;
+      --orange-bg: rgba(255, 165, 0, 0.12);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; }
+
+    /* Navigation */
+    .top-nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .top-nav .logo { font-size: 18px; font-weight: 700; color: var(--accent); }
+    .top-nav .nav-links { display: flex; gap: 24px; }
+    .top-nav a { color: var(--text-dim); text-decoration: none; font-size: 14px; }
+    .top-nav a:hover { color: var(--text); }
+    .top-nav a.active { color: var(--accent); border-bottom: 2px solid var(--accent); padding-bottom: 2px; }
+
+    /* Layout */
+    .container { max-width: 1100px; margin: 0 auto; padding: 32px; }
+    .hero { text-align: center; padding: 48px 0 32px; }
+    .hero h1 { font-size: 32px; margin-bottom: 8px; }
+    .hero p { color: var(--text-dim); font-size: 16px; max-width: 600px; margin: 0 auto; }
+
+    /* Sidebar navigation */
+    .page-layout { display: flex; gap: 32px; }
+    .sidebar { width: 220px; flex-shrink: 0; position: sticky; top: 20px; align-self: flex-start; }
+    .sidebar a { display: block; padding: 8px 12px; color: var(--text-dim); text-decoration: none; font-size: 13px; border-left: 2px solid transparent; }
+    .sidebar a:hover { color: var(--text); background: var(--surface); }
+    .sidebar a.section-head { color: var(--text); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 16px; padding-bottom: 4px; }
+    .sidebar a.section-head:first-child { margin-top: 0; }
+    .content { flex: 1; min-width: 0; }
+
+    /* Sections */
+    section { margin-bottom: 48px; scroll-margin-top: 20px; }
+    section h2 { font-size: 22px; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    section h3 { font-size: 16px; margin: 20px 0 8px; color: var(--accent); }
+    section p { color: var(--text-dim); margin-bottom: 12px; font-size: 14px; }
+
+    /* Cards */
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; margin: 16px 0; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+    .card:hover { border-color: var(--accent); }
+    .card .card-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+    .card .card-desc { font-size: 13px; color: var(--text-dim); }
+    .card .card-icon { font-size: 24px; margin-bottom: 8px; }
+
+    /* Flow diagram */
+    .flow { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 16px 0; padding: 20px; background: var(--surface); border-radius: 8px; border: 1px solid var(--border); }
+    .flow-step { padding: 10px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; white-space: nowrap; cursor: default; position: relative; }
+    .flow-step.human { background: var(--purple-bg); color: var(--purple); border: 1px solid rgba(167, 139, 250, 0.3); }
+    .flow-step.agent { background: var(--cyan-bg); color: var(--cyan); border: 1px solid rgba(34, 211, 238, 0.3); }
+    .flow-step.gate { background: var(--yellow-bg); color: var(--yellow); border: 1px solid rgba(251, 191, 36, 0.3); }
+    .flow-step.tool { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(96, 165, 250, 0.3); }
+    .flow-step.done { background: var(--green-bg); color: var(--green); border: 1px solid rgba(52, 211, 153, 0.3); }
+    .flow-arrow { color: var(--text-muted); font-size: 18px; }
+    .flow-label { width: 100%; font-size: 11px; color: var(--text-muted); margin-top: 4px; text-align: center; }
+
+    /* Command table */
+    .cmd-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+    .cmd-table th { text-align: left; padding: 10px 12px; background: var(--surface); color: var(--text-dim); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); }
+    .cmd-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+    .cmd-table tr:hover td { background: var(--surface-hover); }
+    .cmd-table code { background: rgba(108, 126, 225, 0.12); color: var(--accent); padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+
+    /* Status pills */
+    .pill { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+    .pill.green { background: var(--green-bg); color: var(--green); }
+    .pill.yellow { background: var(--yellow-bg); color: var(--yellow); }
+    .pill.blue { background: var(--blue-bg); color: var(--blue); }
+    .pill.red { background: var(--red-bg); color: var(--red); }
+    .pill.purple { background: var(--purple-bg); color: var(--purple); }
+    .pill.cyan { background: var(--cyan-bg); color: var(--cyan); }
+    .pill.orange { background: var(--orange-bg); color: var(--orange); }
+
+    /* Gate types */
+    .gate-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 12px 0; }
+    .gate-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; }
+    .gate-card .gate-icon { font-size: 28px; margin-bottom: 8px; }
+    .gate-card .gate-name { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+    .gate-card .gate-desc { font-size: 12px; color: var(--text-dim); }
+
+    /* Repo cards */
+    .repo-card { display: flex; align-items: center; gap: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin: 8px 0; }
+    .repo-card:hover { border-color: var(--accent); }
+    .repo-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+    .repo-info { flex: 1; }
+    .repo-name { font-weight: 600; font-size: 14px; }
+    .repo-desc { font-size: 12px; color: var(--text-dim); }
+
+    /* Expand/collapse */
+    details { margin: 8px 0; }
+    details summary { cursor: pointer; color: var(--accent); font-size: 14px; padding: 8px 0; }
+    details summary:hover { color: var(--text); }
+    details .detail-content { padding: 12px 0 12px 16px; border-left: 2px solid var(--border); margin-left: 4px; }
+
+    /* Tooltip on flow steps */
+    .flow-step .tooltip { display: none; position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; font-size: 12px; color: var(--text-dim); white-space: normal; width: 220px; text-align: left; z-index: 10; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+    .flow-step:hover .tooltip { display: block; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .page-layout { flex-direction: column; }
+      .sidebar { width: 100%; position: static; display: flex; flex-wrap: wrap; gap: 4px; }
+      .sidebar a { padding: 6px 10px; }
+      .flow { flex-direction: column; align-items: stretch; }
+      .flow-arrow { text-align: center; transform: rotate(90deg); }
+    }
+  </style>
+</head>
+<body>
+  <nav class="top-nav">
+    <span class="logo">BEACON Harness</span>
+    <div class="nav-links">
+      <a href="index.html">Dashboard</a>
+      <a href="guide.html" class="active">Guide</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="hero">
+      <h1>Harness Engineering Guide</h1>
+      <p>Agent-driven development with human oversight. This guide covers the core concepts, commands, and workflows.</p>
+    </div>
+
+    <div class="page-layout">
+      <nav class="sidebar">
+        <a href="#" class="section-head">Overview</a>
+        <a href="#what-is-harness">What is Harness?</a>
+        <a href="#repos">Repositories</a>
+        <a href="#roles">Roles</a>
+        <a href="#" class="section-head">Concepts</a>
+        <a href="#lifecycle">Task Lifecycle</a>
+        <a href="#phases">Phases</a>
+        <a href="#modes">Modes</a>
+        <a href="#streams">Streams</a>
+        <a href="#gates">Gates</a>
+        <a href="#statuses">Statuses</a>
+        <a href="#" class="section-head">Commands</a>
+        <a href="#commands">CLI Reference</a>
+        <a href="#workflows">Workflows</a>
+        <a href="#" class="section-head">Architecture</a>
+        <a href="#sessions">Session Model</a>
+        <a href="#fixtures">Test Data</a>
+        <a href="#skills">Skills</a>
+      </nav>
+
+      <div class="content">
+
+        <!-- What is Harness -->
+        <section id="what-is-harness">
+          <h2>What is Harness Engineering?</h2>
+          <p>Harness Engineering is an orchestration framework for building software with AI agents. Instead of developers writing code directly, agents handle implementation while humans orchestrate, review, and guide quality through structured checkpoints called gates.</p>
+          <p>The harness tracks every task from spec to completion, enforces quality gates, and captures lessons learned so agents improve with each iteration.</p>
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-icon">🎯</div>
+              <div class="card-title">Spec-Driven</div>
+              <div class="card-desc">Every task starts with a detailed spec. Agents build from specs, not vague descriptions. The spec is the contract.</div>
+            </div>
+            <div class="card">
+              <div class="card-icon">🚧</div>
+              <div class="card-title">Gate-Enforced</div>
+              <div class="card-desc">Quality checkpoints between each phase. Unit tests, visual verification, human review, E2E testing. No shortcuts.</div>
+            </div>
+            <div class="card">
+              <div class="card-icon">🔄</div>
+              <div class="card-title">Learning System</div>
+              <div class="card-desc">Every bug found becomes a test case. Every meeting becomes lessons. Skills and rules evolve with each story.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Repositories -->
+        <section id="repos">
+          <h2>Repositories</h2>
+          <p>Three repos, each with a distinct role. The harness is the command center. Code repos are where agents work.</p>
+          <div class="repo-card">
+            <div class="repo-dot" style="background: var(--accent);"></div>
+            <div class="repo-info">
+              <div class="repo-name">planyear-harness</div>
+              <div class="repo-desc">Command center. CLI tool, harness.json (source of truth), task specs, gate definitions, lessons learned, memory files. Humans orchestrate from here.</div>
+            </div>
+          </div>
+          <div class="repo-card">
+            <div class="repo-dot" style="background: var(--green);"></div>
+            <div class="repo-info">
+              <div class="repo-name">platform</div>
+              <div class="repo-desc">Backend. Java/Spring Boot microservices, MongoDB. Agents create worktrees here for BE development. Has its own .claude/skills for BE-specific rules.</div>
+            </div>
+          </div>
+          <div class="repo-card">
+            <div class="repo-dot" style="background: var(--cyan);"></div>
+            <div class="repo-info">
+              <div class="repo-name">unified-portal</div>
+              <div class="repo-desc">Frontend. React/TypeScript SPA. Agents create worktrees here for FE development. Has its own .claude/skills for FE-specific rules.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Roles -->
+        <section id="roles">
+          <h2>Roles</h2>
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-icon">👤</div>
+              <div class="card-title">Human Orchestrator</div>
+              <div class="card-desc">Writes/reviews specs, triggers commands, reviews gates, makes scope decisions. Never writes production code directly. Works from the harness repo.</div>
+            </div>
+            <div class="card">
+              <div class="card-icon">🤖</div>
+              <div class="card-title">Development Agent</div>
+              <div class="card-desc">Builds features from task specs in isolated worktrees. Writes code, tests, and Storybook stories. Works in platform or unified-portal repos.</div>
+            </div>
+            <div class="card">
+              <div class="card-icon">⚙️</div>
+              <div class="card-title">Harness CLI</div>
+              <div class="card-desc">Orchestration tool. Creates worktrees, tracks status, enforces gates, validates specs, manages phase transitions. The guardrails.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Task Lifecycle -->
+        <section id="lifecycle">
+          <h2>Task Lifecycle</h2>
+          <p>Every task follows this flow. Coloured by who owns each step.</p>
+          <div class="flow">
+            <div class="flow-step tool">
+              prep
+              <span class="tooltip">Generate spec template + prompt. Creates scaffolding and fixture directories.</span>
+            </div>
+            <span class="flow-arrow">&#8594;</span>
+            <div class="flow-step human">
+              Write Spec
+              <span class="tooltip">Human fills in the spec (or uses the generated prompt). Must pass spec-check before starting.</span>
+            </div>
+            <span class="flow-arrow">&#8594;</span>
+            <div class="flow-step tool">
+              spec-check
+              <span class="tooltip">Validates spec completeness: summary, scope, gates, visual refs, no unanswered [HUMAN INPUT REQUIRED] markers.</span>
+            </div>
+            <span class="flow-arrow">&#8594;</span>
+            <div class="flow-step tool">
+              start
+              <span class="tooltip">Creates git worktree, generates agent prompt, sets status to in_progress. Runs spec-check automatically.</span>
+            </div>
+            <span class="flow-arrow">&#8594;</span>
+            <div class="flow-step agent">
+              Agent Builds
+              <span class="tooltip">Agent implements the feature in the worktree. Writes code, unit tests, integration tests, Storybook stories.</span>
+            </div>
+            <span class="flow-arrow">&#8594;</span>
+            <div class="flow-step gate">
+              Gates 1-3
+              <span class="tooltip">Unit tests, visual verification (Figma + Storybook), human review. Each gate must pass before proceeding.</span>
+            </div>
+            <span class="flow-arrow">&#8594;</span>
+            <div class="flow-step tool">
+              pr-ready
+              <span class="tooltip">Marks task as in_review, records PR URL. Code is ready for peer review.</span>
+            </div>
+            <span class="flow-arrow">&#8594;</span>
+            <div class="flow-step tool">
+              mark-merged
+              <span class="tooltip">Marks task as merged, removes worktree, syncs progress.</span>
+            </div>
+            <span class="flow-arrow">&#8594;</span>
+            <div class="flow-step human">
+              Human Review
+              <span class="tooltip">Human verifies the feature in a running system. Logs bugs with ./harness bug. Every bug becomes a test case.</span>
+            </div>
+            <span class="flow-arrow">&#8594;</span>
+            <div class="flow-step gate">
+              Gate 4: E2E
+              <span class="tooltip">End-to-end testing via Playwright. Story-scoped scenarios. Flapdoodle isolation. Agent runs headless, human runs headed.</span>
+            </div>
+            <span class="flow-arrow">&#8594;</span>
+            <div class="flow-step done">
+              Complete
+              <span class="tooltip">All gates passed. Story is done. Lessons captured. Ready for next story.</span>
+            </div>
+          </div>
+          <div style="display: flex; gap: 16px; margin-top: 12px; font-size: 12px; color: var(--text-muted);">
+            <span><span class="pill purple">Purple</span> Human action</span>
+            <span><span class="pill cyan">Cyan</span> Agent action</span>
+            <span><span class="pill yellow">Yellow</span> Gate checkpoint</span>
+            <span><span class="pill blue">Blue</span> CLI command</span>
+            <span><span class="pill green">Green</span> Complete</span>
+          </div>
+        </section>
+
+        <!-- Phases -->
+        <section id="phases">
+          <h2>Phases</h2>
+          <p>Work is organised into phases. Each phase is a self-contained batch of tasks. Tasks within a phase can run in parallel. Tasks across phases cannot.</p>
+          <table class="cmd-table">
+            <tr><th>Phase</th><th>Purpose</th><th>Parallelism</th></tr>
+            <tr><td><span class="pill blue">Phase 0</span></td><td>Infrastructure and test setup. Unit test scaffolding, Storybook setup, Playwright smoke test, MSW handlers, integration test base.</td><td>Sequential (foundational)</td></tr>
+            <tr><td><span class="pill purple">Phase 1</span></td><td>Core features. The main stories for this EPIC. BE and FE development with full gate enforcement.</td><td>Parallel within phase</td></tr>
+            <tr><td><span class="pill yellow">Phase 2</span></td><td>Secondary features. Builds on Phase 1 output.</td><td>Parallel within phase</td></tr>
+            <tr><td><span class="pill green">Phase 3</span></td><td>Edge cases, migration, cleanup.</td><td>Parallel within phase</td></tr>
+          </table>
+          <p style="margin-top: 12px;">Phase transitions happen via <code>./harness phase-transition N</code>. All tasks in the current phase must be complete before transitioning. The baseline fixture is versioned at each phase boundary.</p>
+        </section>
+
+        <!-- Modes -->
+        <section id="modes">
+          <h2>Modes</h2>
+          <p>Each task has a mode that determines how BE and FE work is coordinated.</p>
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-title"><span class="pill green">Mode A</span> Parallel</div>
+              <div class="card-desc">API contract is locked upfront. BE and FE agents work simultaneously. Both can start from the same spec. Faster but requires a stable contract.</div>
+            </div>
+            <div class="card">
+              <div class="card-title"><span class="pill yellow">Mode B</span> Sequential</div>
+              <div class="card-desc">BE goes first, discovers the API contract. FE starts after BE gates pass. Safer for complex or uncertain features. The contract emerges from BE work.</div>
+            </div>
+            <div class="card">
+              <div class="card-title"><span class="pill blue">FE-only</span></div>
+              <div class="card-desc">No backend changes needed. Frontend-only task. Only FE gates apply.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Streams -->
+        <section id="streams">
+          <h2>Streams</h2>
+          <p>Tasks are grouped into streams based on the feature area they affect.</p>
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-title"><span class="pill cyan">SR</span> Start Renewal</div>
+              <div class="card-desc">The renewal initiation flow. Tier validation, plan selection, renewal configuration.</div>
+            </div>
+            <div class="card">
+              <div class="card-title"><span class="pill purple">TS</span> Tier Structure</div>
+              <div class="card-desc">Tier mismatch detection, auto-conversion, quote processing, offer display.</div>
+            </div>
+            <div class="card">
+              <div class="card-title"><span class="pill yellow">BC</span> Benefit Class</div>
+              <div class="card-desc">Plan explosion by benefit class, grouped plan management, contribution modelling.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Gates -->
+        <section id="gates">
+          <h2>Gates</h2>
+          <p>Quality checkpoints that must pass before work proceeds. Each gate has specific checks (automated tests, visual review, human verification).</p>
+          <div class="gate-grid">
+            <div class="gate-card">
+              <div class="gate-icon">🧪</div>
+              <div class="gate-name">test</div>
+              <div class="gate-desc">Automated. Runs specific test commands (unit, integration). Pass/fail based on exit code.</div>
+            </div>
+            <div class="gate-card">
+              <div class="gate-icon">📖</div>
+              <div class="gate-name">storybook</div>
+              <div class="gate-desc">Visual. Agent compares Storybook output against Figma design. Figma MCP for token verification.</div>
+            </div>
+            <div class="gate-card">
+              <div class="gate-icon">👤</div>
+              <div class="gate-name">human</div>
+              <div class="gate-desc">Manual. Human reviews and provides structured feedback. All issues listed at once, not one by one.</div>
+            </div>
+            <div class="gate-card">
+              <div class="gate-icon">🌐</div>
+              <div class="gate-name">e2e</div>
+              <div class="gate-desc">End-to-end. Story-scoped Playwright scenarios. Flapdoodle isolation. Fresh data per run.</div>
+            </div>
+          </div>
+
+          <details>
+            <summary>How gates are enforced</summary>
+            <div class="detail-content">
+              <p>Gates are defined in <code>harness.json</code> per task, each with a list of typed checks. The <code>./harness check-gate</code> command runs automated checks, prompts for manual ones, and records the result.</p>
+              <p>Agents cannot self-report gate completion. They must list specific test commands run and their output. This prevents the self-evaluation bias where agents confidently claim success without evidence.</p>
+            </div>
+          </details>
+        </section>
+
+        <!-- Statuses -->
+        <section id="statuses">
+          <h2>Task Statuses</h2>
+          <p>Each task and its BE/FE sides have independent statuses.</p>
+          <table class="cmd-table">
+            <tr><th>Status</th><th>Meaning</th><th>Who triggers</th></tr>
+            <tr><td><span class="pill" style="background: var(--surface); color: var(--text-dim);">Not Started</span></td><td>Task not yet begun</td><td>Default</td></tr>
+            <tr><td><span class="pill yellow">In Progress</span></td><td>Agent is working in a worktree</td><td><code>./harness start</code></td></tr>
+            <tr><td><span class="pill blue">In Review</span></td><td>PR raised, awaiting peer review</td><td><code>./harness pr-ready</code></td></tr>
+            <tr><td><span class="pill green">Merged</span></td><td>PR merged to feature branch</td><td><code>./harness mark-merged</code></td></tr>
+            <tr><td><span class="pill orange">Verifying</span></td><td>Human review and E2E testing in progress</td><td>Manual update</td></tr>
+            <tr><td><span class="pill green" style="border: 1px solid var(--green);">Complete</span></td><td>All gates passed, story is done</td><td>Manual update</td></tr>
+            <tr><td><span class="pill red">Blocked</span></td><td>Blocked by dependency or external factor</td><td>Manual update</td></tr>
+          </table>
+        </section>
+
+        <!-- Commands -->
+        <section id="commands">
+          <h2>CLI Commands</h2>
+          <p>All commands run from the harness repo root: <code>./harness &lt;command&gt;</code></p>
+          <table class="cmd-table">
+            <tr><th>Command</th><th>What it does</th><th>When to use</th></tr>
+            <tr><td><code>status</code></td><td>Dashboard showing phases, tasks, progress</td><td>Start of day, status checks</td></tr>
+            <tr><td><code>next</code></td><td>Shows unblocked tasks ready to start</td><td>Looking for what to work on</td></tr>
+            <tr><td><code>prep TASK_ID</code></td><td>Generate spec template + agent prompt</td><td>Before writing a new task spec</td></tr>
+            <tr><td><code>prep TASK_ID --add-e2e</code></td><td>Append E2E scenarios section to existing spec</td><td>Before E2E gate on older specs</td></tr>
+            <tr><td><code>spec-check TASK_ID</code></td><td>Validate spec completeness</td><td>After writing spec, before start</td></tr>
+            <tr><td><code>start TASK_ID</code></td><td>Create worktree, set in_progress, generate prompt</td><td>Beginning agent work</td></tr>
+            <tr><td><code>gates TASK_ID</code></td><td>Show all gates and their status</td><td>Checking gate progress</td></tr>
+            <tr><td><code>check-gate TASK_ID N</code></td><td>Run gate checks, mark passed/failed</td><td>At each gate checkpoint</td></tr>
+            <tr><td><code>pr-ready TASK_ID</code></td><td>Mark task as in_review, record PR URL</td><td>After raising a PR</td></tr>
+            <tr><td><code>mark-merged TASK_ID</code></td><td>Mark merged, clean worktree, sync</td><td>After PR is merged</td></tr>
+            <tr><td><code>bug TASK_ID "desc"</code></td><td>Log a bug found during review</td><td>During human verification</td></tr>
+            <tr><td><code>sync</code></td><td>Regenerate progress from harness.json</td><td>After manual edits</td></tr>
+            <tr><td><code>phase-transition N</code></td><td>Complete phase, start next</td><td>All tasks in phase are complete</td></tr>
+          </table>
+          <p style="margin-top: 8px; font-size: 13px; color: var(--text-muted);">All commands support <code>--dry-run</code> to preview without making changes. Use <code>--side be|fe</code> for tasks with both backend and frontend.</p>
+        </section>
+
+        <!-- Workflows -->
+        <section id="workflows">
+          <h2>Common Workflows</h2>
+
+          <details>
+            <summary>Start a new task</summary>
+            <div class="detail-content">
+              <p>1. <code>./harness prep PY-XXXXX</code> (generate template + prompt)</p>
+              <p>2. Paste the prompt into your Claude session to fill the spec</p>
+              <p>3. Review the spec, fill any remaining [HUMAN INPUT REQUIRED]</p>
+              <p>4. <code>./harness spec-check PY-XXXXX</code> (validate)</p>
+              <p>5. <code>./harness start PY-XXXXX --side be</code> (create worktree, start agent)</p>
+            </div>
+          </details>
+
+          <details>
+            <summary>Run through gates</summary>
+            <div class="detail-content">
+              <p>1. Agent completes development in worktree</p>
+              <p>2. <code>./harness gates PY-XXXXX</code> (see what gates exist)</p>
+              <p>3. <code>./harness check-gate PY-XXXXX 1</code> (run Gate 1 checks)</p>
+              <p>4. If failed: fix issues, re-run. If passed: move to next gate.</p>
+              <p>5. Repeat for each gate until all pass.</p>
+            </div>
+          </details>
+
+          <details>
+            <summary>Complete a task</summary>
+            <div class="detail-content">
+              <p>1. <code>./harness pr-ready PY-XXXXX --side be --pr-url "platform #151"</code></p>
+              <p>2. Peer reviews and approves PR</p>
+              <p>3. <code>./harness mark-merged PY-XXXXX --side be --pr-url "platform #151"</code></p>
+              <p>4. Human verifies in running system, logs bugs with <code>./harness bug</code></p>
+              <p>5. E2E gate passes</p>
+              <p>6. Update harness.json status to "complete"</p>
+            </div>
+          </details>
+
+          <details>
+            <summary>Fix-forward (FE finds BE bug)</summary>
+            <div class="detail-content">
+              <p>If the FE agent discovers a missing API field or BE contract issue:</p>
+              <p>1. FE agent creates a small targeted BE fix in a new branch</p>
+              <p>2. Scoped to only the missing field or transform</p>
+              <p>3. Raises a small BE PR alongside the FE work</p>
+              <p>4. Keeps the FE agent moving instead of waiting for coordination</p>
+            </div>
+          </details>
+        </section>
+
+        <!-- Session Model -->
+        <section id="sessions">
+          <h2>Session Model</h2>
+          <p>Keep separate Claude sessions for different concerns. Never mix them.</p>
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-title">Command Center Session</div>
+              <div class="card-desc">Stays in the harness repo. Runs CLI commands, reviews specs, tracks progress. Uses Claude Code desktop (stays anchored). Never cd's to code repos.</div>
+            </div>
+            <div class="card">
+              <div class="card-title">BE Agent Session</div>
+              <div class="card-desc">Works in a platform worktree. Reads task spec from harness (absolute path). Writes code, tests. Never modifies harness files by changing directories.</div>
+            </div>
+            <div class="card">
+              <div class="card-title">FE Agent Session</div>
+              <div class="card-desc">Works in a unified-portal worktree. Same rules as BE session. Uses FE-specific skills and rules.</div>
+            </div>
+          </div>
+          <p style="margin-top: 12px; font-size: 13px; color: var(--text-muted);">Critical: CLI agents tend to cd into different directories, losing access to CLAUDE.md and skills. Always instruct agents to use absolute paths without changing directories.</p>
+        </section>
+
+        <!-- Test Data / Fixtures -->
+        <section id="fixtures">
+          <h2>Test Data and Fixtures</h2>
+          <p>Two-layer fixture system for E2E testing. Each run starts fresh (Flapdoodle, no shared DB).</p>
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-title">Baseline Fixture</div>
+              <div class="card-desc">Shared across all stories. Broker org, employers, users, system plans. Loaded by SeedDataService on Flapdoodle startup. Versioned at each phase transition.</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Story-Specific Fixture</div>
+              <div class="card-desc">Per-task additions on top of baseline. Upload files (quotes, documents), extra seed data. Lives in the task spec directory under fixtures/ and seed/.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Skills -->
+        <section id="skills">
+          <h2>Skills and Rules</h2>
+          <p>Skills auto-load into agent context when relevant topics are mentioned. Rules are distilled from lessons learned.</p>
+          <table class="cmd-table">
+            <tr><th>Skill</th><th>Location</th><th>Triggers on</th></tr>
+            <tr><td>Spec Writing</td><td>harness: <code>.claude/skills/spec-writing/</code></td><td>"spec", "task spec", "story analysis"</td></tr>
+            <tr><td>Harness CLI</td><td>harness: <code>.claude/skills/harness/</code></td><td>"harness", task IDs, "worktree"</td></tr>
+            <tr><td>BE Rules</td><td>platform: <code>.claude/skills/be-rules/</code></td><td>API, VO, transformer, pipeline, Spock</td></tr>
+            <tr><td>FE Rules</td><td>unified-portal: <code>.claude/skills/fe-rules/</code></td><td>Component, Storybook, LESS, TypeScript</td></tr>
+          </table>
+        </section>
+
+        <div style="text-align: center; padding: 40px 0 20px; color: var(--text-muted); font-size: 13px;">
+          Harness Engineering by PlanYear
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
