@@ -434,7 +434,7 @@
       "fe": {
         "repo": "unified-portal",
         "role": "implement-fe",
-        "status": "in_review",
+        "status": "merged",
         "assigned_to": "shanil",
         "pr_url": "https://github.com/planyear/unified-portal/pull/36"
       },
@@ -444,7 +444,71 @@
         "0.8",
         "0.14",
         "0.15"
-      ]
+      ],
+      "notes": "Unscoped BE fix found during E2E: plan-service filterByFirstPlanPremiumType dropped N-Tier plans (BUG-003). Small BE change to return mismatch tiers to FE. Platform PR: https://github.com/planyear/platform/pull/164",
+      "gates": {
+        "1": {
+          "name": "Storybook visual verification",
+          "after": "fe",
+          "status": "passed",
+          "passed_at": "2026-03-28",
+          "checks": [
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/renewals/components/StartRenewal",
+              "desc": "StartRenewal component tests"
+            },
+            {
+              "type": "storybook",
+              "desc": "Storybook stories match Figma: TierTag variants, TierValidationSection banners, CurrentPlanInfo states (6 stories)"
+            },
+            {
+              "type": "human",
+              "desc": "Human verified: Storybook visual review against Figma"
+            }
+          ]
+        },
+        "2": {
+          "name": "System validation",
+          "after": "fe",
+          "status": "passed",
+          "passed_at": "2026-03-29",
+          "checks": [
+            {
+              "type": "human",
+              "desc": "Human verified: tier tags render on running system, mismatch banners appear for mixed tiers, Start Renewal disabled when mismatched, NY/VT SG dropdown locked to Standard 4-tier"
+            }
+          ]
+        },
+        "3": {
+          "name": "End-to-end",
+          "after": "fe",
+          "status": "passed",
+          "passed_at": "2026-03-30",
+          "checks": [
+            {
+              "type": "e2e",
+              "id": 1,
+              "desc": "All plans aligned (4-tier), no banner, Start Renewal enabled (R1 SmallBiz, R2 TechCorp LG)"
+            },
+            {
+              "type": "e2e",
+              "id": 2,
+              "desc": "Mixed tier types, error banner, Start Renewal disabled (C1 MetroNY, C4 NCP N-tier count mismatch)"
+            },
+            {
+              "type": "e2e",
+              "id": 3,
+              "desc": "NY/VT SG with non-standard tier, warning banner + locked dropdown (C5 MetroNY, C6 NYVT no-plans modal)"
+            },
+            {
+              "type": "human",
+              "desc": "Human verified: 14/16 scenarios pass across 7 sessions, 3 employers. 2 skipped (B2/C2: edit rates form not yet built). 4 bugs found and fixed."
+            }
+          ]
+        }
+      },
+      "status": "complete"
     },
     {
       "id": "PY-12422",
