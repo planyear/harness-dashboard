@@ -530,7 +530,139 @@
         "0.15",
         "0.16"
       ],
-      "notes": "BC-level enrollment sections (same/differential contributions) deferred to Phase 5+. Build for current aggregate enrollment behavior only."
+      "notes": "BC-level enrollment sections (same/differential contributions) deferred to Phase 5+. Build for current aggregate enrollment behavior only.",
+      "gates": {
+        "1": {
+          "name": "Component extraction + modal renders",
+          "after": "fe",
+          "status": "not_started",
+          "checks": [
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/RatesTierRows",
+              "desc": "RatesTierRows exports ContributionRow, MonthlyPremiumSection"
+            },
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/MDVRates src/modules/renewals/components/StartNewRenewalModal/components/CurrentPlanInfo",
+              "desc": "MDVRates imports from shared file — MDVRates + CurrentPlanInfo tests pass (only consumer)"
+            },
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/RatesEnrollmentModal/RatesEnrollmentModal.test",
+              "desc": "RatesEnrollmentModal renders Premiums, Contributions, Enrollment sections"
+            },
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/RatesEnrollmentModal/RatesEnrollmentModal.test",
+              "desc": "Premium Type dropdown is enabled and shows correct value"
+            },
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/RatesEnrollmentModal/RatesEnrollmentModal.test",
+              "desc": "Enrollment inputs render correct tier count"
+            },
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/RatesEnrollmentModal/RatesEnrollmentModal.test",
+              "desc": "Done validates rates — blocks if incomplete"
+            },
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/RatesEnrollmentModal/RatesEnrollmentModal.test",
+              "desc": "Done validates enrollment — blocks if incomplete"
+            },
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/RatesEnrollmentModal/RatesEnrollmentModal.test",
+              "desc": "Done calls onSave with merged rates + enrollment when valid"
+            },
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/RatesEnrollmentModal/RatesEnrollmentModal.test",
+              "desc": "Premium Type change calls onPremiumTypeChange, resets form, re-renders with new tier count"
+            },
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/RatesEnrollmentModal/RatesEnrollmentModal.test",
+              "desc": "NCP variant shows Plan Type dropdown above Premiums when isNcpPlan=true"
+            }
+          ]
+        },
+        "2": {
+          "name": "Column integration + save flow",
+          "after": "fe",
+          "status": "not_started",
+          "checks": [
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/CurrentPlanInfo",
+              "desc": "RATES & ENROLLMENT column shows static enrollment count (no click handler)"
+            },
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/CurrentPlanInfo",
+              "desc": "Second column has blank header, shows Edit Details link"
+            },
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/CurrentPlanInfo",
+              "desc": "Clicking Edit Details opens combined modal with correct plan data"
+            },
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/CurrentPlanInfo",
+              "desc": "TierTag renders in column when mismatch (PY-12330 preserved)"
+            },
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/CurrentPlanInfo",
+              "desc": "Done saves rates + enrollment in single API call"
+            },
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/CurrentPlanInfo",
+              "desc": "Plans state updates in table after save"
+            },
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/CurrentPlanInfo",
+              "desc": "NCP skip-census opens combined modal with Plan Type dropdown"
+            },
+            {
+              "type": "human",
+              "desc": "Life & Disability columns/modals unaffected"
+            }
+          ]
+        },
+        "3": {
+          "name": "Visual verification + Storybook",
+          "after": "fe",
+          "status": "not_started",
+          "checks": [
+            {
+              "type": "storybook",
+              "desc": "Storybook stories render: Default4Tier, Empty4Tier, NTier5, ValidationError, NcpPlanType"
+            },
+            {
+              "type": "human",
+              "desc": "Modal layout matches Figma 118676-36304 (minus BC dropdown)"
+            },
+            {
+              "type": "human",
+              "desc": "Table column layout matches Figma 118580-36272 (LG) and 118547-32957 (SG)"
+            },
+            {
+              "type": "human",
+              "desc": "Enrolled text not clickable, Edit Details is clickable"
+            },
+            {
+              "type": "human",
+              "desc": "Modal at 552px does not overflow or clip"
+            }
+          ]
+        }
+      }
     },
     {
       "id": "PY-12331",
