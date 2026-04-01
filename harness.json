@@ -520,7 +520,7 @@
       "fe": {
         "repo": "unified-portal",
         "role": "implement-fe",
-        "status": "not_started",
+        "status": "in_progress",
         "assigned_to": "shanil",
         "pr_url": null
       },
