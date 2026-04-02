@@ -404,9 +404,9 @@
       "be": {
         "repo": "platform",
         "role": "implement-be",
-        "status": "in_progress",
+        "status": "merged",
         "assigned_to": "prabodha",
-        "pr_url": null
+        "pr_url": "https://github.com/planyear/platform/pull/173"
       },
       "fe": {
         "repo": "unified-portal",
