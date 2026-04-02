@@ -411,9 +411,9 @@
       "fe": {
         "repo": "unified-portal",
         "role": "implement-fe",
-        "status": "in_progress",
+        "status": "merged",
         "assigned_to": "prabodha",
-        "pr_url": null
+        "pr_url": "https://github.com/planyear/unified-portal/pull/74"
       },
       "depends_on": [
         "0.1",
