@@ -532,13 +532,13 @@
     }
 
     function getTaskStatus(task) {
-      // Task-level status overrides BE/FE when set to complete or verifying
+      // Task-level status overrides when explicitly set
       if (task.status === 'complete' || task.status === 'verifying') return task.status;
       const beS = task.be ? task.be.status : 'N/A';
       const feS = task.fe ? task.fe.status : 'N/A';
       if (beS === 'N/A' && feS === 'N/A') return task.status || 'not_started';
-      if ((beS === 'complete' || beS === 'N/A') && (feS === 'complete' || feS === 'N/A')) return 'complete';
-      if ((beS === 'merged' || beS === 'complete' || beS === 'N/A') && (feS === 'merged' || feS === 'complete' || feS === 'N/A')) return 'merged';
+      // Both sides merged (or merged/N/A combo) = complete
+      if ((beS === 'merged' || beS === 'complete' || beS === 'N/A') && (feS === 'merged' || feS === 'complete' || feS === 'N/A')) return 'complete';
       if (beS === 'verifying' || feS === 'verifying') return 'verifying';
       if ((beS === 'not_started' || beS === 'N/A') && (feS === 'not_started' || feS === 'blocked_by_BE' || feS === 'N/A')) return 'not_started';
       return 'in_progress';
