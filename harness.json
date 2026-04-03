@@ -520,9 +520,9 @@
       "fe": {
         "repo": "unified-portal",
         "role": "implement-fe",
-        "status": "in_progress",
+        "status": "pr_ready",
         "assigned_to": "shanil",
-        "pr_url": null
+        "pr_url": "https://github.com/planyear/unified-portal/pull/88"
       },
       "depends_on": [
         "PY-12330",
@@ -535,7 +535,7 @@
         "1": {
           "name": "Component extraction + modal renders",
           "after": "fe",
-          "status": "not_started",
+          "status": "passed",
           "checks": [
             {
               "type": "test",
@@ -545,7 +545,7 @@
             {
               "type": "test",
               "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/MDVRates src/modules/renewals/components/StartNewRenewalModal/components/CurrentPlanInfo",
-              "desc": "MDVRates imports from shared file — MDVRates + CurrentPlanInfo tests pass (only consumer)"
+              "desc": "MDVRates imports from shared file \u2014 MDVRates + CurrentPlanInfo tests pass (only consumer)"
             },
             {
               "type": "test",
@@ -565,12 +565,12 @@
             {
               "type": "test",
               "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/RatesEnrollmentModal/RatesEnrollmentModal.test",
-              "desc": "Done validates rates — blocks if incomplete"
+              "desc": "Done validates rates \u2014 blocks if incomplete"
             },
             {
               "type": "test",
               "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/RatesEnrollmentModal/RatesEnrollmentModal.test",
-              "desc": "Done validates enrollment — blocks if incomplete"
+              "desc": "Done validates enrollment \u2014 blocks if incomplete"
             },
             {
               "type": "test",
@@ -587,12 +587,13 @@
               "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/RatesEnrollmentModal/RatesEnrollmentModal.test",
               "desc": "NCP variant shows Plan Type dropdown above Premiums when isNcpPlan=true"
             }
-          ]
+          ],
+          "passed_at": "2026-04-01"
         },
         "2": {
           "name": "Column integration + save flow",
           "after": "fe",
-          "status": "not_started",
+          "status": "passed",
           "checks": [
             {
               "type": "test",
@@ -633,12 +634,13 @@
               "type": "human",
               "desc": "Life & Disability columns/modals unaffected"
             }
-          ]
+          ],
+          "passed_at": "2026-04-02"
         },
         "3": {
           "name": "Visual verification + Storybook",
           "after": "fe",
-          "status": "not_started",
+          "status": "passed",
           "checks": [
             {
               "type": "storybook",
@@ -660,7 +662,8 @@
               "type": "human",
               "desc": "Modal at 552px does not overflow or clip"
             }
-          ]
+          ],
+          "passed_at": "2026-04-02"
         }
       }
     },
