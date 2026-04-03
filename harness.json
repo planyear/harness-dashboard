@@ -371,7 +371,7 @@
       "id": "PY-11947",
       "phase": 1,
       "title": "Add plan validations",
-      "mode": "A",
+      "mode": "B",
       "stream": "SR",
       "be": {
         "repo": "platform",
@@ -393,7 +393,130 @@
         "0.8",
         "0.14",
         "0.15"
-      ]
+      ],
+      "gates": {
+        "1": {
+          "name": "API contract validation",
+          "after": "be",
+          "status": "not_started",
+          "passed_at": null,
+          "checks": [
+            {
+              "type": "test",
+              "cmd": "./gradlew :renewal-service:test --tests \"*SystemPlanSync*\" -x generateGitProperties",
+              "desc": "active-renewal-info endpoint: activeRenewalByLoc correctness, backward compat, serialization (5 integration tests)"
+            },
+            {
+              "type": "test",
+              "cmd": "./gradlew :plan-service:test --tests \"*PlanValidation*\" --tests \"*PlanSyncValidation*\" -x generateGitProperties",
+              "desc": "validate-renewal-fields endpoint (4 unit tests) + PlanSyncValidationService (22 unit tests)"
+            },
+            {
+              "type": "test",
+              "cmd": "./gradlew :plan-service:test --tests \"*MedicalResource*\" --tests \"*DentalResource*\" --tests \"*VisionResource*\" --tests \"*LifeInsuranceResource*\" -x generateGitProperties",
+              "desc": "Layer 2 save-time 422 safety net on all 8 save endpoints (6 unit tests)"
+            },
+            {
+              "type": "human",
+              "desc": "Human verified: JSON response shapes match FE TypeScript interfaces, field names correct (hasActiveRenewal, activeRenewalByLoc, missingRenewalFields)"
+            }
+          ]
+        },
+        "2": {
+          "name": "Component Storybook review",
+          "after": "fe",
+          "status": "not_started",
+          "passed_at": null,
+          "checks": [
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/plans/components/RenewalValidation",
+              "desc": "MissingRenewalFieldsModal, CloneUnavailableModal, SavePlanSyncModal, RatesEnrollmentModal BC extension unit tests"
+            },
+            {
+              "type": "storybook",
+              "desc": "Storybook stories: MissingRenewalFieldsModal (MDV/LAD variants), RatesEnrollmentModal (with BCs), CloneUnavailableModal, SavePlanSyncModal, Clone warning banner"
+            },
+            {
+              "type": "human",
+              "desc": "Human verified (Shanil): each component matches Figma designs \u2014 correct copy, buttons, structure, error state (red banner + red field highlights per PM-5)"
+            }
+          ]
+        },
+        "3": {
+          "name": "Integration Storybook review",
+          "after": "fe",
+          "status": "not_started",
+          "passed_at": null,
+          "checks": [
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/plans",
+              "desc": "All 7 trigger point integration tests: Manual Add, Plan Library (sequential multi-plan), BC change, Clone, BenGuide clone, Effective date change, Upload Current Plans"
+            },
+            {
+              "type": "storybook",
+              "desc": "Tier 2 MSW-powered scenarios: priority chain (form\u2192renewal\u2192sync), LOC reset skip, stepper modal flow, Go Back navigation, API error fallback"
+            },
+            {
+              "type": "human",
+              "desc": "Human verified: wired-up flows work in sequence \u2014 right modal at right trigger, priority chain correct, Clone button dynamic re-enable (PM-2), stepper modal (PM-4)"
+            }
+          ]
+        },
+        "4": {
+          "name": "End-to-end on running system",
+          "after": "fe",
+          "status": "not_started",
+          "passed_at": null,
+          "checks": [
+            {
+              "type": "e2e",
+              "id": 1,
+              "desc": "New medical plan with missing premiums \u2192 MissingRenewalFieldsModal \u2192 RatesEnrollmentModal \u2192 save succeeds"
+            },
+            {
+              "type": "e2e",
+              "id": 2,
+              "desc": "New vision plan (LOC reset) with missing premiums \u2192 no validation, save proceeds normally"
+            },
+            {
+              "type": "e2e",
+              "id": 3,
+              "desc": "New Basic Life plan with missing volume/rate \u2192 MissingRenewalFieldsModal with LAD fields"
+            },
+            {
+              "type": "e2e",
+              "id": 4,
+              "desc": "Plan Library add multiple medical plans \u2192 sequential stepper modal (one plan at a time)"
+            },
+            {
+              "type": "e2e",
+              "id": 5,
+              "desc": "Edit existing plan, add new BC \u2192 RatesEnrollmentModal with BC collapsible sections"
+            },
+            {
+              "type": "e2e",
+              "id": 6,
+              "desc": "Clone plan to year with active renewal \u2192 warning + disabled button; switch to year without renewal \u2192 re-enabled"
+            },
+            {
+              "type": "e2e",
+              "id": 7,
+              "desc": "Benefit Guide clone during active renewal \u2192 CloneUnavailableModal"
+            },
+            {
+              "type": "e2e",
+              "id": 8,
+              "desc": "Change effective date to year with active renewal \u2192 MissingRenewalFieldsModal"
+            },
+            {
+              "type": "human",
+              "desc": "Human verified: all 8 E2E scenarios pass on running system with seed data (TechCorp employer with active renewal)"
+            }
+          ]
+        }
+      }
     },
     {
       "id": "PY-12393",
@@ -545,7 +668,7 @@
             {
               "type": "test",
               "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/MDVRates src/modules/renewals/components/StartNewRenewalModal/components/CurrentPlanInfo",
-              "desc": "MDVRates imports from shared file — MDVRates + CurrentPlanInfo tests pass (only consumer)"
+              "desc": "MDVRates imports from shared file \u2014 MDVRates + CurrentPlanInfo tests pass (only consumer)"
             },
             {
               "type": "test",
@@ -565,12 +688,12 @@
             {
               "type": "test",
               "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/RatesEnrollmentModal/RatesEnrollmentModal.test",
-              "desc": "Done validates rates — blocks if incomplete"
+              "desc": "Done validates rates \u2014 blocks if incomplete"
             },
             {
               "type": "test",
               "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/RatesEnrollmentModal/RatesEnrollmentModal.test",
-              "desc": "Done validates enrollment — blocks if incomplete"
+              "desc": "Done validates enrollment \u2014 blocks if incomplete"
             },
             {
               "type": "test",
