@@ -520,7 +520,7 @@
       "fe": {
         "repo": "unified-portal",
         "role": "implement-fe",
-        "status": "pr_ready",
+        "status": "merged",
         "assigned_to": "shanil",
         "pr_url": "https://github.com/planyear/unified-portal/pull/88"
       },
@@ -545,7 +545,7 @@
             {
               "type": "test",
               "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/MDVRates src/modules/renewals/components/StartNewRenewalModal/components/CurrentPlanInfo",
-              "desc": "MDVRates imports from shared file \u2014 MDVRates + CurrentPlanInfo tests pass (only consumer)"
+              "desc": "MDVRates imports from shared file — MDVRates + CurrentPlanInfo tests pass (only consumer)"
             },
             {
               "type": "test",
@@ -565,12 +565,12 @@
             {
               "type": "test",
               "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/RatesEnrollmentModal/RatesEnrollmentModal.test",
-              "desc": "Done validates rates \u2014 blocks if incomplete"
+              "desc": "Done validates rates — blocks if incomplete"
             },
             {
               "type": "test",
               "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/RatesEnrollmentModal/RatesEnrollmentModal.test",
-              "desc": "Done validates enrollment \u2014 blocks if incomplete"
+              "desc": "Done validates enrollment — blocks if incomplete"
             },
             {
               "type": "test",
