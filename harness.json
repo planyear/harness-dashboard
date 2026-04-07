@@ -368,24 +368,50 @@
       "pr_url": "BB (pending)"
     },
     {
+      "id": "0.35",
+      "phase": 0,
+      "title": "Plans module Storybook baseline — Task 6 (8 components: AddPlan, ClonePlanModal, EditBasicPlanInfo, AddPlanModal, Rates, PlansList, StartNewRenewalModal, CurrentPlanInfo)",
+      "repo": "unified-portal",
+      "role": "implement-fe",
+      "spec": "epics/sr-ts-bc/task-specs/phase-0/0.35-plans-module-storybook-baseline/spec.md",
+      "depends_on": [
+        "0.17",
+        "0.34"
+      ],
+      "status": "not_started",
+      "assigned_to": null,
+      "pr_url": null,
+      "notes": "Prerequisite for PY-11947 FE. Tasks 3-5 (renewals module stories) are done. Task 6 (plans module) was never run. Without baseline stories, PY-11947 agent cannot write Tier 2 integration stories — discovered during PY-11947 FE failure analysis.",
+      "priority_a": [
+        "AddPlan",
+        "ClonePlanModal",
+        "EditBasicPlanInfo",
+        "AddPlanModal"
+      ],
+      "priority_b": [
+        "Rates",
+        "PlansList",
+        "StartNewRenewalModal",
+        "CurrentPlanInfo"
+      ],
+      "deliverables": {
+        "stories": 8,
+        "mocking_recipe": "docs/storybook-learnings.md (Task 6 section)"
+      }
+    },
+    {
       "id": "PY-11947",
       "phase": 1,
       "title": "Add plan validations",
       "mode": "B",
       "stream": "SR",
+      "split_reason": "Original FE spec (~33K tokens) caused context exhaustion. Split into 4 sequential FE parts with human checkpoints. Plan Library (Trigger 2) extracted to FE-D due to complex multi-plan 3-step flow.",
       "be": {
         "repo": "platform",
         "role": "implement-be",
-        "status": "in_progress",
+        "status": "merged",
         "assigned_to": "prabodha",
-        "pr_url": null
-      },
-      "fe": {
-        "repo": "unified-portal",
-        "role": "implement-fe",
-        "status": "not_started",
-        "assigned_to": null,
-        "pr_url": null
+        "pr_url": "platform #193"
       },
       "depends_on": [
         "0.1",
@@ -516,7 +542,94 @@
             }
           ]
         }
+      },
+      "fe": {
+        "repo": "unified-portal",
+        "role": "implement-fe",
+        "status": "split",
+        "note": "Split into PY-11947-FE-A, FE-B, FE-C, FE-D"
       }
+    },
+    {
+      "id": "PY-11947-FE-A",
+      "phase": 1,
+      "title": "Plan validations: Components + Hook + Tier 1 Stories",
+      "mode": "FE-only",
+      "stream": "SR",
+      "parent": "PY-11947",
+      "fe": {
+        "repo": "unified-portal",
+        "role": "implement-fe",
+        "status": "not_started",
+        "assigned_to": null,
+        "pr_url": null
+      },
+      "spec": "epics/sr-ts-bc/task-specs/phase-1/PY-11947-add-plan-validations/fe-part-a.md",
+      "depends_on": [
+        "0.35"
+      ],
+      "notes": "Shared components, hook, types. Gate 2 (Component Storybook review)."
+    },
+    {
+      "id": "PY-11947-FE-B",
+      "phase": 1,
+      "title": "Plan validations: AddPlan + BC Change (Triggers 1, 3)",
+      "mode": "FE-only",
+      "stream": "SR",
+      "parent": "PY-11947",
+      "fe": {
+        "repo": "unified-portal",
+        "role": "implement-fe",
+        "status": "not_started",
+        "assigned_to": null,
+        "pr_url": null
+      },
+      "spec": "epics/sr-ts-bc/task-specs/phase-1/PY-11947-add-plan-validations/fe-part-b.md",
+      "depends_on": [
+        "PY-11947-FE-A"
+      ],
+      "notes": "Integration: Triggers 1, 3. Gate 3 partial."
+    },
+    {
+      "id": "PY-11947-FE-D",
+      "phase": 1,
+      "title": "Plan validations: Plan Library 3-Step Flow (Trigger 2)",
+      "mode": "FE-only",
+      "stream": "SR",
+      "parent": "PY-11947",
+      "fe": {
+        "repo": "unified-portal",
+        "role": "implement-fe",
+        "status": "not_started",
+        "assigned_to": null,
+        "pr_url": null
+      },
+      "spec": "epics/sr-ts-bc/task-specs/phase-1/PY-11947-add-plan-validations/fe-part-d.md",
+      "depends_on": [
+        "PY-11947-FE-B"
+      ],
+      "notes": "Integration: Trigger 2 (Plan Library). Complex multi-plan 3-step modal orchestration. Gate 3 partial."
+    },
+    {
+      "id": "PY-11947-FE-C",
+      "phase": 1,
+      "title": "Plan validations: Clone + BenGuide + EffDate (Triggers 4-6)",
+      "mode": "FE-only",
+      "stream": "SR",
+      "parent": "PY-11947",
+      "fe": {
+        "repo": "unified-portal",
+        "role": "implement-fe",
+        "status": "not_started",
+        "assigned_to": null,
+        "pr_url": null
+      },
+      "spec": "epics/sr-ts-bc/task-specs/phase-1/PY-11947-add-plan-validations/fe-part-c.md",
+      "depends_on": [
+        "PY-11947-FE-B",
+        "PY-11947-FE-D"
+      ],
+      "notes": "Integration: Triggers 4-6. Gate 3 remaining + Gate 4 E2E."
     },
     {
       "id": "PY-12393",
