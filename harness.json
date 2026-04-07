@@ -378,9 +378,11 @@
         "0.17",
         "0.34"
       ],
-      "status": "not_started",
-      "assigned_to": null,
-      "pr_url": null,
+      "fe": {
+        "status": "in_progress",
+        "assigned_to": "shanil",
+        "pr_url": null
+      },
       "notes": "Prerequisite for PY-11947 FE. Tasks 3-5 (renewals module stories) are done. Task 6 (plans module) was never run. Without baseline stories, PY-11947 agent cannot write Tier 2 integration stories — discovered during PY-11947 FE failure analysis.",
       "priority_a": [
         "AddPlan",
