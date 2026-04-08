@@ -562,9 +562,9 @@
       "fe": {
         "repo": "unified-portal",
         "role": "implement-fe",
-        "status": "in_progress",
+        "status": "in_review",
         "assigned_to": "prabodha",
-        "pr_url": null
+        "pr_url": "https://github.com/planyear/unified-portal/pull/108"
       },
       "spec": "epics/sr-ts-bc/task-specs/phase-1/PY-11947-add-plan-validations/fe-part-a.md",
       "depends_on": [],
