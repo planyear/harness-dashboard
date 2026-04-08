@@ -580,8 +580,8 @@
       "fe": {
         "repo": "unified-portal",
         "role": "implement-fe",
-        "status": "not_started",
-        "assigned_to": null,
+        "status": "in_progress",
+        "assigned_to": "prabodha",
         "pr_url": null
       },
       "spec": "epics/sr-ts-bc/task-specs/phase-1/PY-11947-add-plan-validations/fe-part-b.md",
@@ -620,14 +620,13 @@
       "fe": {
         "repo": "unified-portal",
         "role": "implement-fe",
-        "status": "not_started",
-        "assigned_to": null,
+        "status": "in_progress",
+        "assigned_to": "shanil",
         "pr_url": null
       },
       "spec": "epics/sr-ts-bc/task-specs/phase-1/PY-11947-add-plan-validations/fe-part-c.md",
       "depends_on": [
-        "PY-11947-FE-B",
-        "PY-11947-FE-D"
+        "PY-11947-FE-A"
       ],
       "notes": "Integration: Triggers 4-6. Gate 3 remaining + Gate 4 E2E."
     },
