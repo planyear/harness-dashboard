@@ -379,9 +379,9 @@
         "0.34"
       ],
       "fe": {
-        "status": "in_progress",
+        "status": "merged",
         "assigned_to": "shanil",
-        "pr_url": null
+        "pr_url": "portal #107"
       },
       "notes": "Prerequisite for PY-11947 FE. Tasks 3-5 (renewals module stories) are done. Task 6 (plans module) was never run. Without baseline stories, PY-11947 agent cannot write Tier 2 integration stories — discovered during PY-11947 FE failure analysis.",
       "priority_a": [
