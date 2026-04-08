@@ -568,7 +568,8 @@
       },
       "spec": "epics/sr-ts-bc/task-specs/phase-1/PY-11947-add-plan-validations/fe-part-a.md",
       "depends_on": [],
-      "notes": "Shared components, hook, types. Gate 2 (Component Storybook review). 0.35 not required — Part A uses Tier 1 (prop-driven) stories only."
+      "notes": "Shared components, hook, types. Gate 2 (Component Storybook review). 0.35 not required — Part A uses Tier 1 (prop-driven) stories only.",
+      "status": "merged"
     },
     {
       "id": "PY-11947-FE-B",
