@@ -562,7 +562,7 @@
       "fe": {
         "repo": "unified-portal",
         "role": "implement-fe",
-        "status": "in_review",
+        "status": "merged",
         "assigned_to": "prabodha",
         "pr_url": "https://github.com/planyear/unified-portal/pull/108"
       },
