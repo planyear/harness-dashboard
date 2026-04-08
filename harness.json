@@ -582,7 +582,7 @@
         "repo": "unified-portal",
         "role": "implement-fe",
         "status": "in_progress",
-        "assigned_to": "prabodha",
+        "assigned_to": "shanil",
         "pr_url": null
       },
       "spec": "epics/sr-ts-bc/task-specs/phase-1/PY-11947-add-plan-validations/fe-part-b.md",
@@ -622,7 +622,7 @@
         "repo": "unified-portal",
         "role": "implement-fe",
         "status": "in_progress",
-        "assigned_to": "shanil",
+        "assigned_to": "prabodha",
         "pr_url": null
       },
       "spec": "epics/sr-ts-bc/task-specs/phase-1/PY-11947-add-plan-validations/fe-part-c.md",
