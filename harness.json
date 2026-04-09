@@ -549,7 +549,7 @@
         "repo": "unified-portal",
         "role": "implement-fe",
         "status": "split",
-        "note": "Split into PY-11947-FE-A, FE-B, FE-C, FE-D"
+        "note": "Split into PY-11947-FE-A, FE-B, FE-C, FE-D, FE-E"
       }
     },
     {
@@ -609,7 +609,7 @@
       "depends_on": [
         "PY-11947-FE-A"
       ],
-      "notes": "Integration: Triggers 4-5 (Clone + BenGuide). Trigger 6 moved to FE-B. Gate 3 remaining + Gate 4 E2E."
+      "notes": "Integration: Triggers 4-5 (Clone + BenGuide). Gate 3 remaining. Gate 4 E2E moved to FE-E."
     },
     {
       "id": "PY-11947-FE-C",
@@ -629,7 +629,29 @@
       "depends_on": [
         "PY-11947-FE-A"
       ],
-      "notes": "Integration: Triggers 4-6. Gate 3 remaining + Gate 4 E2E."
+      "notes": "Integration: Trigger 2 (Plan Library). Merged."
+    },
+    {
+      "id": "PY-11947-FE-E",
+      "phase": 1,
+      "title": "Plan validations: Gate 4 E2E (Playwright MCP)",
+      "mode": "FE-only",
+      "stream": "SR",
+      "parent": "PY-11947",
+      "fe": {
+        "repo": "unified-portal",
+        "role": "implement-fe",
+        "status": "not_started",
+        "assigned_to": null,
+        "pr_url": null
+      },
+      "spec": "epics/sr-ts-bc/task-specs/phase-1/PY-11947-add-plan-validations/fe-part-e.md",
+      "depends_on": [
+        "PY-11947-FE-B",
+        "PY-11947-FE-C",
+        "PY-11947-FE-D"
+      ],
+      "notes": "Gate 4 E2E validation. All triggers must be merged. Extracted from FE-D."
     },
     {
       "id": "PY-12393",
