@@ -601,8 +601,8 @@
       "fe": {
         "repo": "unified-portal",
         "role": "implement-fe",
-        "status": "not_started",
-        "assigned_to": null,
+        "status": "in_progress",
+        "assigned_to": "prabodha",
         "pr_url": null
       },
       "spec": "epics/sr-ts-bc/task-specs/phase-1/PY-11947-add-plan-validations/fe-part-d.md",
