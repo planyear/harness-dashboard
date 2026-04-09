@@ -574,7 +574,7 @@
     {
       "id": "PY-11947-FE-B",
       "phase": 1,
-      "title": "Plan validations: AddPlan + BC Change (Triggers 1, 3)",
+      "title": "Plan validations: AddPlan + BC Change + Effective Date (Triggers 1, 3, 6)",
       "mode": "FE-only",
       "stream": "SR",
       "parent": "PY-11947",
@@ -589,12 +589,12 @@
       "depends_on": [
         "PY-11947-FE-A"
       ],
-      "notes": "Integration: Triggers 1, 3. Gate 3 partial."
+      "notes": "Integration: Triggers 1, 3, 6. Gate 3 partial."
     },
     {
       "id": "PY-11947-FE-D",
       "phase": 1,
-      "title": "Plan validations: Plan Library 3-Step Flow (Trigger 2)",
+      "title": "Plan validations: Clone + BenGuide (Triggers 4, 5) + Gates 3/4",
       "mode": "FE-only",
       "stream": "SR",
       "parent": "PY-11947",
@@ -607,9 +607,9 @@
       },
       "spec": "epics/sr-ts-bc/task-specs/phase-1/PY-11947-add-plan-validations/fe-part-d.md",
       "depends_on": [
-        "PY-11947-FE-B"
+        "PY-11947-FE-A"
       ],
-      "notes": "Integration: Trigger 2 (Plan Library). Complex multi-plan 3-step modal orchestration. Gate 3 partial."
+      "notes": "Integration: Triggers 4-5 (Clone + BenGuide). Trigger 6 moved to FE-B. Gate 3 remaining + Gate 4 E2E."
     },
     {
       "id": "PY-11947-FE-C",
