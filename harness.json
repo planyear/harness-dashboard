@@ -581,9 +581,9 @@
       "fe": {
         "repo": "unified-portal",
         "role": "implement-fe",
-        "status": "in_progress",
+        "status": "merged",
         "assigned_to": "shanil",
-        "pr_url": null
+        "pr_url": "unified-portal #114"
       },
       "spec": "epics/sr-ts-bc/task-specs/phase-1/PY-11947-add-plan-validations/fe-part-b.md",
       "depends_on": [
@@ -601,9 +601,9 @@
       "fe": {
         "repo": "unified-portal",
         "role": "implement-fe",
-        "status": "in_progress",
+        "status": "merged",
         "assigned_to": "prabodha",
-        "pr_url": null
+        "pr_url": "unified-portal #125"
       },
       "spec": "epics/sr-ts-bc/task-specs/phase-1/PY-11947-add-plan-validations/fe-part-d.md",
       "depends_on": [
@@ -623,7 +623,7 @@
         "role": "implement-fe",
         "status": "merged",
         "assigned_to": "prabodha",
-        "pr_url": null
+        "pr_url": "unified-portal #111"
       },
       "spec": "epics/sr-ts-bc/task-specs/phase-1/PY-11947-add-plan-validations/fe-part-c.md",
       "depends_on": [
@@ -641,7 +641,7 @@
       "fe": {
         "repo": "unified-portal",
         "role": "implement-fe",
-        "status": "not_started",
+        "status": "merged",
         "assigned_to": null,
         "pr_url": null
       },
