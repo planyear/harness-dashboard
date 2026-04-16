@@ -1159,7 +1159,168 @@
         "PY-12330",
         "PY-12331",
         "PY-12422"
-      ]
+      ],
+      "gates": {
+        "1": {
+          "name": "BE tier validation + data contract",
+          "after": "be",
+          "status": "not_started",
+          "checks": [
+            {
+              "type": "test",
+              "cmd": "./gradlew :services:plan-service:test -x generateGitProperties --tests \"*.TierMismatchValidationSpec\"",
+              "desc": "TierMismatchException unit tests: thrown on mismatched tier, NOT thrown when matched, NOT thrown when no active renewal"
+            },
+            {
+              "type": "test",
+              "cmd": "./gradlew :services:plan-service:test -x generateGitProperties --tests \"*.TierChangeNotificationProducerSpec\"",
+              "desc": "Producer publishes correct event on ER admin tier change, NOT published on broker admin change, event payload has all required fields"
+            },
+            {
+              "type": "test",
+              "cmd": "./gradlew :services:plan-service:test -x generateGitProperties --tests \"*.MedicalResourceSpec\" --tests \"*.DentalResourceSpec\" --tests \"*.VisionResourceSpec\" --tests \"*.MedicalLibraryPlanResourceSpec\" --tests \"*.DentalLibraryPlanResourceSpec\" --tests \"*.VisionPlanLibraryResourceSpec\"",
+              "desc": "All 6 resource files return HTTP 422 on mismatched tier with structured error payload (errorCode: TIER_MISMATCH, renewalTierType, submittedTierType, benefitCategory)"
+            },
+            {
+              "type": "test",
+              "cmd": "./gradlew :services:renewal-service:test -x generateGitProperties --tests \"*.RenewalInfoVOTransformerSpec\"",
+              "desc": "RenewalInfoVO.tierType populated correctly per benefitCategory from StartRenewalSnapShot"
+            },
+            {
+              "type": "human",
+              "desc": "Human verified: API response shapes for /rest/api/3/issue/{id} (active renewal info now includes tierType per LOC), 422 error response on mismatch, no regression on PY-12393 + PY-11947 endpoints"
+            }
+          ]
+        },
+        "2": {
+          "name": "Email delivery (communication-service)",
+          "after": "be",
+          "status": "not_started",
+          "checks": [
+            {
+              "type": "test",
+              "cmd": "./gradlew :services:communication-service:test -x generateGitProperties --tests \"*.TierChangeNotificationConsumerSpec\"",
+              "desc": "Consumer deserializes TierChangeNotificationEvent correctly from queue, calls SES with rendered template"
+            },
+            {
+              "type": "test",
+              "cmd": "./gradlew :services:communication-service:test -x generateGitProperties --tests \"*.TierChangeTemplateRenderSpec\"",
+              "desc": "FreeMarker template renders with all variables (EMPLOYER_NAME, BENEFIT_TYPE, OLD_TIER_TYPE, NEW_TIER_TYPE, USER_NAME, TIMESTAMP, LINK_TO_LOC_OFFER_PAGE)"
+            },
+            {
+              "type": "human",
+              "desc": "Human verified: dev environment email rendered correctly in test inbox; subject and body match story spec; offer page link valid"
+            }
+          ]
+        },
+        "3": {
+          "name": "FE Tier Review modal visual",
+          "after": "fe",
+          "status": "not_started",
+          "checks": [
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/plans/components/TierReviewModal src/modules/plans/hooks/useTierMismatchCheck",
+              "desc": "TierReviewModal: tier tags grey/red correct, Continue enabled when all plans aligned, Cancel abandons save, Edit Details opens existing rates popup. useTierMismatchCheck: returns true on mismatch, false on match."
+            },
+            {
+              "type": "storybook",
+              "desc": "Storybook stories match Figma node 118338:36024 (Review Tier Structure modal): default state, mid-alignment state, all-aligned state. Tier tags use Dust Red #fff1f0/#ffa39e, NOT yellow."
+            },
+            {
+              "type": "human",
+              "desc": "Human verified: visual match against Figma 118338:36024, 118338:35952, 118338:36087"
+            }
+          ]
+        },
+        "4": {
+          "name": "FE block integration across all entry points",
+          "after": "fe",
+          "status": "not_started",
+          "checks": [
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/plans/medical/components/AddPlan src/modules/plans/dental/components/AddDentalPlanDialog src/modules/plans/vision/components/AddVisionPlanDialog src/modules/plans/components/DVPlanBasicInfoForm src/modules/plans/components/BasicPlanInfo/EditBasicPlanInfo src/modules/plans/components/ClonePlanModal src/modules/renewals/components/ClonePlanDropDown src/modules/renewals/components/AddOfferComponents/AddPlanConfirmModal",
+              "desc": "Save handler in each of 8 components opens TierReviewModal BEFORE BE call when mismatch detected. Save proceeds normally when no mismatch. Clone restricted to LG MDV only (SG DV does NOT trigger)."
+            },
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/plans/__tests__/modalOrdering",
+              "desc": "Modal ordering: Tier Review (PY-12334) fires before Save and Sync (PY-12393) when both apply"
+            },
+            {
+              "type": "human",
+              "desc": "Human verified: BE 422 fallback surfaces to user via existing toast/banner pattern; no real-time banner during editing (only on Save click)"
+            }
+          ]
+        },
+        "5": {
+          "name": "End-to-end",
+          "after": "fe",
+          "status": "not_started",
+          "checks": [
+            {
+              "type": "e2e",
+              "id": 1,
+              "desc": "ER admin creates medical plan with mismatched tier: TierReviewModal opens, user aligns via Edit Details popup, save succeeds, broker email sent (verify in test inbox)"
+            },
+            {
+              "type": "e2e",
+              "id": 2,
+              "desc": "Broker admin edits dental plan with mismatched tier: TierReviewModal opens, user aligns, save succeeds, NO email sent"
+            },
+            {
+              "type": "e2e",
+              "id": 3,
+              "desc": "Plan library import (LG MDV) with mismatched tier: BE 422 returned, error surfaced via toast, plan NOT created"
+            },
+            {
+              "type": "e2e",
+              "id": 4,
+              "desc": "Clone plan (LG MDV) with mismatched tier: TierReviewModal opens. Same flow with SG DV: modal does NOT open (intentional, decisions.md W3)"
+            },
+            {
+              "type": "e2e",
+              "id": 5,
+              "desc": "Direct API call with mismatched tier (no FE, medical resource): BE 422 with structured error payload"
+            },
+            {
+              "type": "e2e",
+              "id": 6,
+              "desc": "Tier Review modal Cancel: closes modal AND abandons original save, form returns to unsaved state"
+            },
+            {
+              "type": "e2e",
+              "id": 7,
+              "desc": "Vision plan create with mismatched tier (broker admin): TierReviewModal opens, validates AddVisionPlanDialog entry point and VisionResource 422 path"
+            },
+            {
+              "type": "e2e",
+              "id": 8,
+              "desc": "Plan library happy path (LG MDV, all aligned): no modal, plan created via library endpoint, validates MedicalLibraryPlanResource does not block matched tiers"
+            },
+            {
+              "type": "e2e",
+              "id": 9,
+              "desc": "Add benefit classes triggers TierReviewModal: validates W4 reuse assumption that BC change uses same Review Tier Structure modal"
+            },
+            {
+              "type": "e2e",
+              "id": 10,
+              "desc": "Modal ordering: tier change AND field change in same save fires PY-12334 TierReviewModal FIRST, then PY-12393 Save and Sync modal SECOND"
+            },
+            {
+              "type": "e2e",
+              "id": 11,
+              "desc": "Upload Current Plans flow: parsed plan with mismatched tier is server-side-defaulted to renewal tier in StartRenewalSnapshotService.upsert (no FE modal, server-side defaulting per W-new-1)"
+            },
+            {
+              "type": "human",
+              "desc": "Verify full flow visually matches AC A, AC B, AC C against Figma and PM clarifications (Q1-Q6)"
+            }
+          ]
+        }
+      }
     },
     {
       "id": "PY-12428",
