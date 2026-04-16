@@ -334,6 +334,9 @@
       font-weight: 500;
     }
 
+    a.task-id { text-decoration: none; }
+    a.task-id:hover { color: var(--accent); text-decoration: underline; }
+
     .task-title {
       font-weight: 500;
     }
@@ -605,6 +608,15 @@
       return `<span class="status-pill ${cls}">${labels[status] || status}</span>`;
     }
 
+    // Render a task ID. Real Jira IDs (PY-<number>) are linked to Jira; anything else (0.35, PY-DUMMY) stays plain text.
+    const JIRA_BASE_URL = 'https://planyear.atlassian.net/browse/';
+    function taskIdHtml(id) {
+      if (/^PY-\d+$/.test(id)) {
+        return `<a class="task-id" href="${JIRA_BASE_URL}${id}" target="_blank" rel="noopener">${id}</a>`;
+      }
+      return `<span class="task-id">${id}</span>`;
+    }
+
     function render() {
       const overall = getOverallStats();
       const overallPct = overall.total > 0 ? Math.round(overall.merged / overall.total * 100) : 0;
@@ -758,7 +770,7 @@
 
             html += `
               <tr>
-                <td><span class="task-id">${t.id}</span></td>
+                <td>${taskIdHtml(t.id)}</td>
                 <td><span class="task-title">${t.title}</span></td>
                 <td><span class="assignee">${t.role || '-'}</span></td>
                 <td>${statusPill(t.status)}</td>
@@ -807,7 +819,7 @@
             const assigned = (t.be && t.be.assigned_to) || (t.fe && t.fe.assigned_to) || '-';
             html += `
               <tr>
-                <td><span class="task-id">${t.id}</span></td>
+                <td>${taskIdHtml(t.id)}</td>
                 <td><span class="task-title">${t.title}</span></td>
                 <td><span class="assignee">P${t.phase}</span></td>
                 <td><span class="mode-badge ${t.mode === 'N/A' ? 'NA' : t.mode}">${t.mode}</span></td>
