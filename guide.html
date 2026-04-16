@@ -156,10 +156,12 @@
         <a href="#roles">Roles</a>
         <a href="#" class="section-head">Concepts</a>
         <a href="#lifecycle">Task Lifecycle</a>
+        <a href="#gap-check">Gap Analysis</a>
         <a href="#phases">Phases</a>
         <a href="#modes">Modes</a>
         <a href="#streams">Streams</a>
         <a href="#gates">Gates</a>
+        <a href="#checkpoints">Slack Checkpoints</a>
         <a href="#statuses">Statuses</a>
         <a href="#" class="section-head">Commands</a>
         <a href="#commands">CLI Reference</a>
@@ -251,8 +253,18 @@
           <p>Every task follows this flow. Coloured by who owns each step.</p>
           <div class="flow">
             <div class="flow-step tool">
+              gap-check
+              <span class="tooltip">Upstream quality gate. Runs structured gap analysis on the Jira story, Figma, and codebase before spec-writing begins. Produces a gap-report.md with blockers and warnings.</span>
+            </div>
+            <span class="flow-arrow">&#8594;</span>
+            <div class="flow-step human">
+              Resolve Gaps
+              <span class="tooltip">Human reviews gap-report.md, answers open questions, records decisions in decisions.md. Blockers must be resolved before prep.</span>
+            </div>
+            <span class="flow-arrow">&#8594;</span>
+            <div class="flow-step tool">
               prep
-              <span class="tooltip">Generate spec template + prompt. Creates scaffolding and fixture directories.</span>
+              <span class="tooltip">Generate spec template + prompt. Creates scaffolding and fixture directories. Pulls context from gap-report + decisions.</span>
             </div>
             <span class="flow-arrow">&#8594;</span>
             <div class="flow-step human">
@@ -267,17 +279,17 @@
             <span class="flow-arrow">&#8594;</span>
             <div class="flow-step tool">
               start
-              <span class="tooltip">Creates git worktree, generates agent prompt, sets status to in_progress. Runs spec-check automatically.</span>
+              <span class="tooltip">Creates git worktree, generates agent prompt, sets status to in_progress. Writes .harness-root so /checkpoint can reach back to the harness repo.</span>
             </div>
             <span class="flow-arrow">&#8594;</span>
             <div class="flow-step agent">
               Agent Builds
-              <span class="tooltip">Agent implements the feature in the worktree. Writes code, unit tests, integration tests, Storybook stories.</span>
+              <span class="tooltip">Agent implements the feature in the worktree. Writes code, unit tests, integration tests, Storybook stories. Calls /checkpoint at each gate for human review.</span>
             </div>
             <span class="flow-arrow">&#8594;</span>
             <div class="flow-step gate">
               Gates 1-3
-              <span class="tooltip">Unit tests, visual verification (Figma + Storybook), human review. Each gate must pass before proceeding.</span>
+              <span class="tooltip">Unit tests, visual verification (Figma + Storybook), human review. Each gate must pass before proceeding. Human approves via Slack checkpoint buttons.</span>
             </div>
             <span class="flow-arrow">&#8594;</span>
             <div class="flow-step tool">
@@ -312,6 +324,43 @@
             <span><span class="pill blue">Blue</span> CLI command</span>
             <span><span class="pill green">Green</span> Complete</span>
           </div>
+        </section>
+
+        <!-- Gap Analysis -->
+        <section id="gap-check">
+          <h2>Gap Analysis</h2>
+          <p>The most upstream check in the harness. Runs before spec-writing to surface every ambiguity that would force implementation-time clarification. Catching a gap here saves days of agent churn later. Missing one becomes a PY-11947 iteration.</p>
+          <p>Invoked via <code>./harness gap-check TASK_ID</code>. Produces a <code>gap-report.md</code> in the task spec directory with structured blockers (B1, B2, ...) and warnings (W1, W2, ...).</p>
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-icon">🎫</div>
+              <div class="card-title">Jira Story</div>
+              <div class="card-desc">Fetches the story, reads description, acceptance criteria, comments, linked tickets. Flags missing ACs, ambiguous language, unresolved PM questions.</div>
+            </div>
+            <div class="card">
+              <div class="card-icon">🎨</div>
+              <div class="card-title">Figma Designs</div>
+              <div class="card-desc">Walks linked Figma nodes. Flags missing states, unspecified hover/error/loading behavior, components that don't exist in the codebase yet.</div>
+            </div>
+            <div class="card">
+              <div class="card-icon">🔍</div>
+              <div class="card-title">Codebase Scan</div>
+              <div class="card-desc">Identifies impacted services, models, components. Flags breaking contract changes, existing similar work to extend, naming collisions.</div>
+            </div>
+            <div class="card">
+              <div class="card-icon">📊</div>
+              <div class="card-title">Complexity Score</div>
+              <div class="card-desc">Computes effort estimate based on scope, code reach, and gate coverage. Informs mode selection (A vs B) and dependency ordering.</div>
+            </div>
+          </div>
+
+          <h3>Blockers vs Warnings</h3>
+          <p><strong>Blockers (B1–BN):</strong> Hard stops. Cannot proceed to prep. Typical examples: missing API contract decision, unresolved PM question, missing Figma node for a named component.</p>
+          <p><strong>Warnings (W1–WN):</strong> Flagged but non-blocking. Can proceed with a documented assumption. Typical examples: optional field defaulting, error state not designed, accessibility note.</p>
+
+          <h3>decisions.md</h3>
+          <p>Human-owned file. Records resolutions to gap-report items. Each entry references the blocker/warning ID (B1, W3) and captures the decision. On re-run, gap-check reads decisions.md and does not re-flag resolved items unless the underlying issue has changed (e.g., Figma updated, Jira amended) — in which case it flags the decision as potentially stale.</p>
+          <p style="margin-top: 8px; font-size: 13px; color: var(--text-muted);">Gap-check is idempotent. Run it again after decisions or spec changes to confirm everything still holds.</p>
         </section>
 
         <!-- Phases -->
@@ -404,6 +453,80 @@
           </details>
         </section>
 
+        <!-- Slack Checkpoints -->
+        <section id="checkpoints">
+          <h2>Slack Checkpoints</h2>
+          <p>Agents pause for human review at every gate by posting a checkpoint to the <code>#harness-checkpoints</code> Slack channel. The agent blocks until the human approves, reports issues, or the checkpoint times out.</p>
+          <p>This replaces ad-hoc "is this ready?" messages and prevents agents from self-approving decisions that affect correctness, UX, or scope.</p>
+
+          <h3>How a checkpoint works</h3>
+          <div class="flow">
+            <div class="flow-step agent">
+              Agent calls /checkpoint
+              <span class="tooltip">Agent runs /checkpoint with artifacts (screenshots, test output, diffs) and a step description.</span>
+            </div>
+            <span class="flow-arrow">&#8594;</span>
+            <div class="flow-step tool">
+              Slack post
+              <span class="tooltip">Message posted to #harness-checkpoints with artifacts, links, and Continue / Has Issues buttons. Tags the story owner.</span>
+            </div>
+            <span class="flow-arrow">&#8594;</span>
+            <div class="flow-step human">
+              Human reviews
+              <span class="tooltip">Owner sees the checkpoint, clicks Continue (approve) or Has Issues (opens feedback modal).</span>
+            </div>
+            <span class="flow-arrow">&#8594;</span>
+            <div class="flow-step agent">
+              Agent resumes
+              <span class="tooltip">Exit code returned: 0 (continue), 1 (has issues, read feedback), 2 (timeout after 15 min).</span>
+            </div>
+          </div>
+
+          <h3>What goes in a checkpoint</h3>
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-icon">📸</div>
+              <div class="card-title">Visual comparison</div>
+              <div class="card-desc">Figma design screenshot (via Figma REST API) + Storybook screenshot (via Playwright MCP) side-by-side. Optional --figma-url and --storybook-url add clickable links.</div>
+            </div>
+            <div class="card">
+              <div class="card-icon">📄</div>
+              <div class="card-title">Text artifact</div>
+              <div class="card-desc">Test output, API response, diff. Posted inline as a code block (truncated at 2000 chars).</div>
+            </div>
+            <div class="card">
+              <div class="card-icon">🤔</div>
+              <div class="card-title">Decision point</div>
+              <div class="card-desc">When spec is ambiguous or the agent is about to assume. Text file describing the options. Human directs.</div>
+            </div>
+          </div>
+
+          <h3>Exit codes</h3>
+          <table class="cmd-table">
+            <tr><th>Code</th><th>Meaning</th><th>Agent action</th></tr>
+            <tr><td><span class="pill green">0</span></td><td>Human clicked Continue</td><td>Proceed to next step</td></tr>
+            <tr><td><span class="pill red">1</span></td><td>Human clicked Has Issues, submitted feedback</td><td>Read feedback from <code>.harness/checkpoints/TASK_ID.json</code>, fix every issue, re-run checkpoint</td></tr>
+            <tr><td><span class="pill orange">2</span></td><td>15-minute timeout, no response</td><td>Stop working and exit. Human replies in Slack thread, then runs <code>claude --continue</code> which auto-resumes</td></tr>
+          </table>
+
+          <h3>Owner tagging</h3>
+          <p>Checkpoints tag the story owner (from <code>harness.json</code> → task <code>owner</code> → developer email → Slack user). Priority: direct <code>slack_user_id</code> on the developer record, fallback to <code>users.lookupByEmail</code> Slack API.</p>
+
+          <h3>Timeout and resume flow</h3>
+          <p>On 15-minute timeout: buttons are removed, the header turns orange, and a thread reply instruction is posted asking for <code>approved</code> or <code>issues: your feedback</code>. When the human replies and the agent resumes via <code>claude --continue</code>, <code>./harness resume TASK_ID</code> runs automatically — it fetches the thread reply, updates the checkpoint JSON, and returns the appropriate exit code.</p>
+
+          <h3>Configuration</h3>
+          <p>Slack tokens live in <code>.env.harness</code> (gitignored). Required: <code>SLACK_BOT_TOKEN</code>, <code>SLACK_APP_TOKEN</code> (Socket Mode), <code>SLACK_CHANNEL_ID</code>. Verify connectivity with <code>./harness slack-test</code>.</p>
+
+          <details>
+            <summary>Checkpoint JSON structure</summary>
+            <div class="detail-content">
+              <p>Each task has one JSON file at <code>.harness/checkpoints/TASK_ID.json</code> inside the worktree. Each checkpoint call appends an entry to the <code>checkpoints</code> array with id, status (pending / responded / expired), artifacts, Slack message timestamp, and response object (action, feedback, source).</p>
+              <p>On <code>./harness complete</code>, the checkpoint files are archived to the harness repo at <code>.harness/checkpoints/TASK_ID/SIDE/</code> and committed. Expired checkpoints trigger a confirmation prompt before archiving.</p>
+            </div>
+          </details>
+        </section>
+
         <!-- Statuses -->
         <section id="statuses">
           <h2>Task Statuses</h2>
@@ -428,19 +551,24 @@
             <tr><th>Command</th><th>What it does</th><th>When to use</th></tr>
             <tr><td><code>status</code></td><td>Dashboard showing phases, tasks, progress</td><td>Start of day, status checks</td></tr>
             <tr><td><code>next</code></td><td>Shows unblocked tasks ready to start</td><td>Looking for what to work on</td></tr>
+            <tr><td><code>gap-check TASK_ID</code></td><td>Structured gap analysis on Jira, Figma, and codebase</td><td>Before spec-writing, to surface ambiguities</td></tr>
             <tr><td><code>prep TASK_ID</code></td><td>Generate spec template + agent prompt</td><td>Before writing a new task spec</td></tr>
             <tr><td><code>prep TASK_ID --add-e2e</code></td><td>Append E2E scenarios section to existing spec</td><td>Before E2E gate on older specs</td></tr>
             <tr><td><code>spec-check TASK_ID</code></td><td>Validate spec completeness</td><td>After writing spec, before start</td></tr>
-            <tr><td><code>start TASK_ID</code></td><td>Create worktree, set in_progress, generate prompt</td><td>Beginning agent work</td></tr>
+            <tr><td><code>start TASK_ID [be|fe]</code></td><td>Create worktree, set in_progress, generate prompt, write .harness-root</td><td>Beginning agent work</td></tr>
             <tr><td><code>gates TASK_ID</code></td><td>Show all gates and their status</td><td>Checking gate progress</td></tr>
             <tr><td><code>check-gate TASK_ID N</code></td><td>Run gate checks, mark passed/failed</td><td>At each gate checkpoint</td></tr>
+            <tr><td><code>checkpoint TASK_ID ARTIFACT...</code></td><td>Post checkpoint to Slack, block for human response (called by agent via /checkpoint skill)</td><td>At every human review point</td></tr>
+            <tr><td><code>resume TASK_ID</code></td><td>Fetch Slack thread reply for expired checkpoint, update JSON</td><td>After timeout, auto-run on <code>claude --continue</code></td></tr>
+            <tr><td><code>slack-test</code></td><td>Verify Slack connectivity, post test message</td><td>Setup and troubleshooting</td></tr>
             <tr><td><code>pr-ready TASK_ID</code></td><td>Mark task as in_review, record PR URL</td><td>After raising a PR</td></tr>
+            <tr><td><code>complete TASK_ID [be|fe]</code></td><td>Remove worktree, archive checkpoints, update status</td><td>After PR is merged</td></tr>
             <tr><td><code>mark-merged TASK_ID</code></td><td>Mark merged, clean worktree, sync</td><td>After PR is merged</td></tr>
             <tr><td><code>bug TASK_ID "desc"</code></td><td>Log a bug found during review</td><td>During human verification</td></tr>
             <tr><td><code>sync</code></td><td>Regenerate progress from harness.json</td><td>After manual edits</td></tr>
             <tr><td><code>phase-transition N</code></td><td>Complete phase, start next</td><td>All tasks in phase are complete</td></tr>
           </table>
-          <p style="margin-top: 8px; font-size: 13px; color: var(--text-muted);">All commands support <code>--dry-run</code> to preview without making changes. Use <code>--side be|fe</code> for tasks with both backend and frontend.</p>
+          <p style="margin-top: 8px; font-size: 13px; color: var(--text-muted);">All commands support <code>--dry-run</code> to preview without making changes. Use <code>--side be|fe</code> or positional <code>be</code>/<code>fe</code> for tasks with both backend and frontend.</p>
         </section>
 
         <!-- Workflows -->
@@ -450,22 +578,25 @@
           <details>
             <summary>Start a new task</summary>
             <div class="detail-content">
-              <p>1. <code>./harness prep PY-XXXXX</code> (generate template + prompt)</p>
-              <p>2. Paste the prompt into your Claude session to fill the spec</p>
-              <p>3. Review the spec, fill any remaining [HUMAN INPUT REQUIRED]</p>
-              <p>4. <code>./harness spec-check PY-XXXXX</code> (validate)</p>
-              <p>5. <code>./harness start PY-XXXXX --side be</code> (create worktree, start agent)</p>
+              <p>1. <code>./harness gap-check PY-XXXXX</code> (surface gaps before spec-writing)</p>
+              <p>2. Review gap-report.md, record resolutions in decisions.md, re-run gap-check until clean</p>
+              <p>3. <code>./harness prep PY-XXXXX</code> (generate template + prompt)</p>
+              <p>4. Paste the prompt into your Claude session to fill the spec</p>
+              <p>5. Review the spec, fill any remaining [HUMAN INPUT REQUIRED]</p>
+              <p>6. <code>./harness spec-check PY-XXXXX</code> (validate)</p>
+              <p>7. <code>./harness start PY-XXXXX be</code> (create worktree, start agent)</p>
             </div>
           </details>
 
           <details>
-            <summary>Run through gates</summary>
+            <summary>Run through gates (with Slack checkpoints)</summary>
             <div class="detail-content">
-              <p>1. Agent completes development in worktree</p>
-              <p>2. <code>./harness gates PY-XXXXX</code> (see what gates exist)</p>
-              <p>3. <code>./harness check-gate PY-XXXXX 1</code> (run Gate 1 checks)</p>
-              <p>4. If failed: fix issues, re-run. If passed: move to next gate.</p>
-              <p>5. Repeat for each gate until all pass.</p>
+              <p>1. Agent develops in worktree, calls <code>/checkpoint</code> at each gate</p>
+              <p>2. Slack message appears in #harness-checkpoints with artifacts and buttons</p>
+              <p>3. Owner clicks Continue (approve) or Has Issues (feedback modal)</p>
+              <p>4. Agent receives exit code: 0 (proceed), 1 (fix feedback), 2 (timeout)</p>
+              <p>5. On timeout: human replies in Slack thread, runs <code>claude --continue</code> which auto-resumes via <code>./harness resume</code></p>
+              <p>6. Repeat until all gates pass, then <code>./harness pr-ready</code></p>
             </div>
           </details>
 
@@ -536,11 +667,18 @@
           <p>Skills auto-load into agent context when relevant topics are mentioned. Rules are distilled from lessons learned.</p>
           <table class="cmd-table">
             <tr><th>Skill</th><th>Location</th><th>Triggers on</th></tr>
+            <tr><td>Gap Check</td><td>harness: <code>.claude/skills/gap-check/</code></td><td>"gap-check", "gap report", invoked by <code>./harness gap-check</code></td></tr>
             <tr><td>Spec Writing</td><td>harness: <code>.claude/skills/spec-writing/</code></td><td>"spec", "task spec", "story analysis"</td></tr>
             <tr><td>Harness CLI</td><td>harness: <code>.claude/skills/harness/</code></td><td>"harness", task IDs, "worktree"</td></tr>
+            <tr><td>Checkpoint</td><td>harness: <code>.claude/skills/checkpoint/</code> (symlinked into every worktree)</td><td>"/checkpoint", "post checkpoint", "request human review"</td></tr>
+            <tr><td>Evaluate</td><td>harness: <code>.claude/skills/evaluate/</code></td><td>"evaluate", "review against spec", "is this ready". Incremental: evaluates only claimed-complete criteria per cycle.</td></tr>
+            <tr><td>Review PR</td><td>harness: <code>.claude/skills/review-pr/</code></td><td>"review PR", PR URLs</td></tr>
+            <tr><td>E2E Test</td><td>harness: <code>.claude/skills/e2e-test/</code></td><td>Gate 4 Playwright scenarios, headless/headed runs</td></tr>
+            <tr><td>Jira Comment</td><td>harness: <code>.claude/skills/jira-comment/</code></td><td>Structured comments on Jira tickets</td></tr>
             <tr><td>BE Rules</td><td>platform: <code>.claude/skills/be-rules/</code></td><td>API, VO, transformer, pipeline, Spock</td></tr>
             <tr><td>FE Rules</td><td>unified-portal: <code>.claude/skills/fe-rules/</code></td><td>Component, Storybook, LESS, TypeScript</td></tr>
           </table>
+          <p style="margin-top: 12px; font-size: 13px; color: var(--text-muted);">The <code>checkpoint</code> skill is symlinked into every worktree on <code>./harness start</code>. Along with it, <code>.harness-root</code> is written at the worktree root so <code>/checkpoint</code> can reach back to the harness repo's Python libraries. The agent invokes it as <code>python3 $(cat .harness-root)/harness-lib/checkpoint.py ...</code></p>
         </section>
 
         <div style="text-align: center; padding: 40px 0 20px; color: var(--text-muted); font-size: 13px;">
