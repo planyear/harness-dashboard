@@ -1,0 +1,11 @@
+# macOS Finder artifacts
+.DS_Store
+Icon
+Icon?
+Icon*
+._*
+
+# Editor
+.vscode/
+.idea/
+*.swp
