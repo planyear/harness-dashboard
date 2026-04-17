@@ -376,7 +376,7 @@
     {
       "id": "0.35",
       "phase": 0,
-      "title": "Plans module Storybook baseline — Task 6 (8 components: AddPlan, ClonePlanModal, EditBasicPlanInfo, AddPlanModal, Rates, PlansList, StartNewRenewalModal, CurrentPlanInfo)",
+      "title": "Plans module Storybook baseline \u2014 Task 6 (8 components: AddPlan, ClonePlanModal, EditBasicPlanInfo, AddPlanModal, Rates, PlansList, StartNewRenewalModal, CurrentPlanInfo)",
       "repo": "unified-portal",
       "role": "implement-fe",
       "spec": "epics/sr-ts-bc/task-specs/phase-0/0.35-plans-module-storybook-baseline/spec.md",
@@ -389,7 +389,7 @@
         "assigned_to": "shanil",
         "pr_url": "portal #107"
       },
-      "notes": "Prerequisite for PY-11947 FE. Tasks 3-5 (renewals module stories) are done. Task 6 (plans module) was never run. Without baseline stories, PY-11947 agent cannot write Tier 2 integration stories — discovered during PY-11947 FE failure analysis.",
+      "notes": "Prerequisite for PY-11947 FE. Tasks 3-5 (renewals module stories) are done. Task 6 (plans module) was never run. Without baseline stories, PY-11947 agent cannot write Tier 2 integration stories \u2014 discovered during PY-11947 FE failure analysis.",
       "priority_a": [
         "AddPlan",
         "ClonePlanModal",
@@ -473,7 +473,7 @@
             },
             {
               "type": "human",
-              "desc": "Human verified (Shanil): each component matches Figma designs — correct copy, buttons, structure, error state (red banner + red field highlights per PM-5)"
+              "desc": "Human verified (Shanil): each component matches Figma designs \u2014 correct copy, buttons, structure, error state (red banner + red field highlights per PM-5)"
             }
           ]
         },
@@ -490,11 +490,11 @@
             },
             {
               "type": "storybook",
-              "desc": "Tier 2 MSW-powered scenarios: priority chain (form→renewal→sync), LOC reset skip, stepper modal flow, Go Back navigation, API error fallback"
+              "desc": "Tier 2 MSW-powered scenarios: priority chain (form\u2192renewal\u2192sync), LOC reset skip, stepper modal flow, Go Back navigation, API error fallback"
             },
             {
               "type": "human",
-              "desc": "Human verified: wired-up flows work in sequence — right modal at right trigger, priority chain correct, Clone button dynamic re-enable (PM-2), stepper modal (PM-4)"
+              "desc": "Human verified: wired-up flows work in sequence \u2014 right modal at right trigger, priority chain correct, Clone button dynamic re-enable (PM-2), stepper modal (PM-4)"
             }
           ]
         },
@@ -507,42 +507,42 @@
             {
               "type": "e2e",
               "id": 1,
-              "desc": "New medical plan with missing premiums → MissingRenewalFieldsModal → RatesEnrollmentModal → save succeeds"
+              "desc": "New medical plan with missing premiums \u2192 MissingRenewalFieldsModal \u2192 RatesEnrollmentModal \u2192 save succeeds"
             },
             {
               "type": "e2e",
               "id": 2,
-              "desc": "New vision plan (LOC reset) with missing premiums → no validation, save proceeds normally"
+              "desc": "New vision plan (LOC reset) with missing premiums \u2192 no validation, save proceeds normally"
             },
             {
               "type": "e2e",
               "id": 3,
-              "desc": "New Basic Life plan with missing volume/rate → MissingRenewalFieldsModal with LAD fields"
+              "desc": "New Basic Life plan with missing volume/rate \u2192 MissingRenewalFieldsModal with LAD fields"
             },
             {
               "type": "e2e",
               "id": 4,
-              "desc": "Plan Library add multiple medical plans → sequential stepper modal (one plan at a time)"
+              "desc": "Plan Library add multiple medical plans \u2192 sequential stepper modal (one plan at a time)"
             },
             {
               "type": "e2e",
               "id": 5,
-              "desc": "Edit existing plan, add new BC → RatesEnrollmentModal with BC collapsible sections"
+              "desc": "Edit existing plan, add new BC \u2192 RatesEnrollmentModal with BC collapsible sections"
             },
             {
               "type": "e2e",
               "id": 6,
-              "desc": "Clone plan to year with active renewal → warning + disabled button; switch to year without renewal → re-enabled"
+              "desc": "Clone plan to year with active renewal \u2192 warning + disabled button; switch to year without renewal \u2192 re-enabled"
             },
             {
               "type": "e2e",
               "id": 7,
-              "desc": "Benefit Guide clone during active renewal → CloneUnavailableModal"
+              "desc": "Benefit Guide clone during active renewal \u2192 CloneUnavailableModal"
             },
             {
               "type": "e2e",
               "id": 8,
-              "desc": "Change effective date to year with active renewal → MissingRenewalFieldsModal"
+              "desc": "Change effective date to year with active renewal \u2192 MissingRenewalFieldsModal"
             },
             {
               "type": "human",
@@ -575,7 +575,7 @@
       },
       "spec": "epics/sr-ts-bc/task-specs/phase-1/PY-11947-add-plan-validations/fe-part-a.md",
       "depends_on": [],
-      "notes": "Shared components, hook, types. Gate 2 (Component Storybook review). 0.35 not required — Part A uses Tier 1 (prop-driven) stories only.",
+      "notes": "Shared components, hook, types. Gate 2 (Component Storybook review). 0.35 not required \u2014 Part A uses Tier 1 (prop-driven) stories only.",
       "status": "merged"
     },
     {
@@ -810,7 +810,7 @@
             {
               "type": "test",
               "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/MDVRates src/modules/renewals/components/StartNewRenewalModal/components/CurrentPlanInfo",
-              "desc": "MDVRates imports from shared file — MDVRates + CurrentPlanInfo tests pass (only consumer)"
+              "desc": "MDVRates imports from shared file \u2014 MDVRates + CurrentPlanInfo tests pass (only consumer)"
             },
             {
               "type": "test",
@@ -830,12 +830,12 @@
             {
               "type": "test",
               "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/RatesEnrollmentModal/RatesEnrollmentModal.test",
-              "desc": "Done validates rates — blocks if incomplete"
+              "desc": "Done validates rates \u2014 blocks if incomplete"
             },
             {
               "type": "test",
               "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/RatesEnrollmentModal/RatesEnrollmentModal.test",
-              "desc": "Done validates enrollment — blocks if incomplete"
+              "desc": "Done validates enrollment \u2014 blocks if incomplete"
             },
             {
               "type": "test",
@@ -1165,166 +1165,176 @@
       ],
       "gates": {
         "1": {
-          "name": "BE tier validation + data contract",
+          "name": "BE API Contract Validation",
           "after": "be",
           "status": "not_started",
           "checks": [
             {
               "type": "test",
-              "cmd": "./gradlew :services:plan-service:test -x generateGitProperties --tests \"*.TierMismatchValidationSpec\"",
-              "desc": "TierMismatchException unit tests: thrown on mismatched tier, NOT thrown when matched, NOT thrown when no active renewal"
+              "cmd": "./gradlew :services:renewal-service:test -x generateGitProperties --tests \"*.StartRenewalSnapshotTransformerSpec\"",
+              "desc": "Step 1: RenewalInfoVO.tierType populated correctly per benefitCategory (3 unit tests)"
             },
             {
               "type": "test",
-              "cmd": "./gradlew :services:plan-service:test -x generateGitProperties --tests \"*.TierChangeNotificationProducerSpec\"",
-              "desc": "Producer publishes correct event on ER admin tier change, NOT published on broker admin change, event payload has all required fields"
+              "cmd": "./gradlew :services:plan-service:test -x generateGitProperties --tests \"*.TierMismatchValidationSpec\"",
+              "desc": "Step 2: TierMismatchException thrown/not-thrown correctly (4 unit tests)"
             },
             {
               "type": "test",
               "cmd": "./gradlew :services:plan-service:test -x generateGitProperties --tests \"*.MedicalResourceSpec\" --tests \"*.DentalResourceSpec\" --tests \"*.VisionResourceSpec\" --tests \"*.MedicalLibraryPlanResourceSpec\" --tests \"*.DentalLibraryPlanResourceSpec\" --tests \"*.VisionPlanLibraryResourceSpec\"",
-              "desc": "All 6 resource files return HTTP 422 on mismatched tier with structured error payload (errorCode: TIER_MISMATCH, renewalTierType, submittedTierType, benefitCategory)"
+              "desc": "Step 2 R6: All 6 resources return HTTP 422 on mismatched tier"
             },
             {
               "type": "test",
-              "cmd": "./gradlew :services:renewal-service:test -x generateGitProperties --tests \"*.RenewalInfoVOTransformerSpec\"",
-              "desc": "RenewalInfoVO.tierType populated correctly per benefitCategory from StartRenewalSnapShot"
+              "cmd": "./gradlew :services:plan-service:test -x generateGitProperties --tests \"*.TierChangeNotificationSpec\"",
+              "desc": "Step 3: Producer publishes event on ER admin, not on broker admin (4 unit tests)"
+            },
+            {
+              "type": "test",
+              "cmd": "./gradlew :services:communication-service:test -x generateGitProperties --tests \"*.TierChangeNotificationConsumerSpec\"",
+              "desc": "Step 3: Consumer deserializes event, template renders, SES mocked (3 tests)"
+            },
+            {
+              "type": "test",
+              "cmd": "./gradlew :services:ai-orchestration-service:test -x generateGitProperties --tests \"*.PlanDocumentReadingPipelineSpec\"",
+              "desc": "Step 4: Document extraction tier defaulting (4 unit tests)"
             },
             {
               "type": "human",
-              "desc": "Human verified: plan-service API response includes tierType per LOC in ActiveRenewalInfoVO, 422 error response on tier mismatch, no regression on PY-12393 + PY-11947 endpoints"
-            },
-            {
-              "type": "test",
-              "cmd": "./gradlew :services:ai-orchestration-service:test -x generateGitProperties --tests \"*.PlanDocumentReadingPipelineTierDefaultingSpec\"",
-              "desc": "Document extraction tier defaulting: no rates + active renewal populates renewal tier, rates present skips, non-MDV skips, missing tier info skips"
+              "desc": "Human checkpoint: spec-vs-actual contract comparison (gate1-spec-vs-actual.txt). Verify C1 tierType field, C2 422 response, C3 event payload all match spec shapes. Approve to unblock FE."
             }
           ]
         },
         "2": {
-          "name": "Email delivery (communication-service)",
-          "after": "be",
-          "status": "not_started",
-          "checks": [
-            {
-              "type": "test",
-              "cmd": "./gradlew :services:communication-service:test -x generateGitProperties --tests \"*.TierChangeNotificationConsumerSpec\"",
-              "desc": "Consumer deserializes TierChangeNotificationEvent correctly from queue, calls SES with rendered template"
-            },
-            {
-              "type": "test",
-              "cmd": "./gradlew :services:communication-service:test -x generateGitProperties --tests \"*.TierChangeTemplateRenderSpec\"",
-              "desc": "FreeMarker template renders with all variables (EMPLOYER_NAME, BENEFIT_TYPE, OLD_TIER_TYPE, NEW_TIER_TYPE, USER_NAME, TIMESTAMP, LINK_TO_LOC_OFFER_PAGE)"
-            },
-            {
-              "type": "human",
-              "desc": "Human verified: dev environment email rendered correctly in test inbox; subject and body match story spec; offer page link valid"
-            }
-          ]
-        },
-        "3": {
-          "name": "FE Tier Review modal visual",
+          "name": "FE Modal Components, Visual Fidelity",
           "after": "fe",
           "status": "not_started",
           "checks": [
             {
               "type": "test",
               "cmd": "yarn test --run src/modules/plans/components/TierReviewModal src/modules/plans/hooks/useTierMismatchCheck",
-              "desc": "TierReviewModal: tier tags grey/red correct, Continue enabled when all plans aligned, Cancel abandons save, Edit Details opens existing rates popup. useTierMismatchCheck: returns true on mismatch, false on match."
+              "desc": "Step 5+6: 14 Vitest tests (8 modal + 6 hook) all pass"
             },
             {
               "type": "storybook",
-              "desc": "Storybook stories match Figma node 118338:36024 (Review Tier Structure modal): default state, mid-alignment state, all-aligned state. Tier tags use Dust Red #fff1f0/#ffa39e, NOT yellow."
+              "desc": "3 Storybook stories load without errors: TierReviewMismatched, TierReviewAllAligned, TierReviewAfterEdit. Elements match spec (tier tags, buttons, data-testid values)."
             },
             {
               "type": "human",
-              "desc": "Human verified: visual match against Figma 118338:36024, 118338:35952, 118338:36087"
+              "desc": "Human checkpoint: 3 pixel-diff comparisons (Figma vs Storybook). Gate 2.1: mismatched state vs 118338:36024. Gate 2.2: aligned state vs 118338:36024. Gate 2.3: edit state vs 118338:36087. Approve visual fidelity."
             }
           ]
         },
-        "4": {
-          "name": "FE block integration across all entry points",
+        "3": {
+          "name": "Flow Integration (Vitest + MSW)",
           "after": "fe",
           "status": "not_started",
           "checks": [
             {
               "type": "test",
-              "cmd": "yarn test --run src/modules/plans/medical/components/AddPlan src/modules/plans/dental/components/AddDentalPlanDialog src/modules/plans/vision/components/AddVisionPlanDialog src/modules/plans/components/Rates src/modules/plans/components/ClonePlanModal src/modules/renewals/components/ClonePlanDropDown src/modules/renewals/components/AddOfferComponents/AddPlanConfirmModal",
-              "desc": "Save handler in create components (AddPlan, AddDentalPlanDialog, AddVisionPlanDialog) and Rates.tsx opens TierReviewModal BEFORE BE call when mismatch detected. Clone restricted to LG MDV only. Save proceeds normally when no mismatch."
-            },
-            {
-              "type": "test",
-              "cmd": "yarn test --run src/modules/plans/__tests__/modalOrdering",
-              "desc": "Modal ordering: Tier Review (PY-12334) fires before Save and Sync (PY-12393) when both apply"
-            },
-            {
-              "type": "human",
-              "desc": "Human verified: BE 422 fallback surfaces to user via existing toast/banner pattern; no real-time banner during editing (only on Save click)"
+              "cmd": "yarn test --run src/modules/plans/components/__integration__/TierConsistencyFlowIntegration.test.tsx",
+              "desc": "10 Vitest integration tests: create flow (3), edit flow (2), clone flow (2), BE 422 fallback (1), BC add (1), baseline no-renewal (1). All deterministic, no human checkpoint."
             }
           ]
         },
-        "5": {
-          "name": "End-to-end",
+        "4": {
+          "name": "E2E Agent Verification (Playwright MCP)",
           "after": "fe",
           "status": "not_started",
           "checks": [
             {
               "type": "e2e",
               "id": 1,
-              "desc": "ER admin creates medical plan with mismatched tier: TierReviewModal opens, user aligns via Edit Details popup, save succeeds, broker email sent (verify in test inbox)"
+              "desc": "ER admin create medical with mismatched tier: modal opens, align, save, email sent"
             },
             {
               "type": "e2e",
               "id": 2,
-              "desc": "Broker admin edits dental plan with mismatched tier: TierReviewModal opens, user aligns, save succeeds, NO email sent"
+              "desc": "Broker admin edit dental with mismatched tier: modal opens, align, save, NO email"
             },
             {
               "type": "e2e",
               "id": 3,
-              "desc": "Plan library import (LG MDV) with mismatched tier: BE 422 returned, error surfaced via toast, plan NOT created"
+              "desc": "Plan library import with mismatched tier: modal opens, align, save"
             },
             {
               "type": "e2e",
               "id": 4,
-              "desc": "Clone plan (LG MDV) with mismatched tier: TierReviewModal opens. Same flow with SG DV: modal does NOT open (intentional, decisions.md W3)"
+              "desc": "Clone LG MDV with mismatch: modal opens. SG DV: no modal (W3)"
             },
             {
               "type": "e2e",
               "id": 5,
-              "desc": "Direct API call with mismatched tier (no FE, medical resource): BE 422 with structured error payload"
+              "desc": "Direct API POST with mismatched tier: HTTP 422 TIER_MISMATCH"
             },
             {
               "type": "e2e",
               "id": 6,
-              "desc": "Tier Review modal Cancel: closes modal AND abandons original save, form returns to unsaved state"
+              "desc": "TierReviewModal Cancel: modal closes, save abandoned"
             },
             {
               "type": "e2e",
               "id": 7,
-              "desc": "Vision plan create with mismatched tier (broker admin): TierReviewModal opens, validates AddVisionPlanDialog entry point and VisionResource 422 path"
+              "desc": "Vision create broker admin with mismatch: modal opens, validates VisionResource 422"
             },
             {
               "type": "e2e",
               "id": 8,
-              "desc": "Plan library happy path (LG MDV, all aligned): no modal, plan created via library endpoint, validates MedicalLibraryPlanResource does not block matched tiers"
+              "desc": "Plan library happy path (matched tier): no modal, saves directly"
             },
             {
               "type": "e2e",
               "id": 9,
-              "desc": "Add benefit classes triggers TierReviewModal: validates W4 reuse assumption that BC change uses same Review Tier Structure modal"
+              "desc": "Add benefit classes triggers modal (W4)"
             },
             {
               "type": "e2e",
               "id": 10,
-              "desc": "Modal ordering: tier change AND field change in same save fires PY-12334 TierReviewModal FIRST, then PY-12393 Save and Sync modal SECOND"
+              "desc": "Modal ordering: Tier Review before Save and Sync (PY-12393)"
             },
             {
               "type": "e2e",
               "id": 11,
-              "desc": "Document extraction with no rates: AI extracts but rates empty, PlanDocumentReadingPipeline defaults to renewal tier. Review screen shows correct tier pre-filled. On Save, if aligned, saves normally."
+              "desc": "Document extraction no rates: pipeline defaults to renewal tier, review screen shows correct tier"
+            }
+          ]
+        },
+        "5": {
+          "name": "Final Human Sign-off",
+          "after": "fe",
+          "status": "not_started",
+          "checks": [
+            {
+              "type": "human",
+              "desc": "Review Gate 4 agent results (11/11 scenarios passed)"
             },
             {
               "type": "human",
-              "desc": "Verify full flow visually matches AC A, AC B, AC C against Figma and PM clarifications (Q1-Q6)"
+              "desc": "Spot-check: ER admin create with mismatch -> modal -> align -> save -> email received"
+            },
+            {
+              "type": "human",
+              "desc": "Spot-check: broker admin edit -> modal -> align -> save -> NO email"
+            },
+            {
+              "type": "human",
+              "desc": "Spot-check: plan library import -> default tier applied"
+            },
+            {
+              "type": "human",
+              "desc": "Spot-check: Cancel flow -> save abandoned"
+            },
+            {
+              "type": "human",
+              "desc": "Verify no regressions in existing plan flows (create/edit/delete without active renewal)"
+            },
+            {
+              "type": "human",
+              "desc": "Verify Tier Review modal Dust Red matches Figma (W1)"
+            },
+            {
+              "type": "human",
+              "desc": "Verify modal ordering: Tier Review fires before Save and Sync (PY-12393)"
             }
           ]
         }
