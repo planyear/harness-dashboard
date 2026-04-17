@@ -1191,7 +1191,12 @@
             },
             {
               "type": "human",
-              "desc": "Human verified: API response shapes for /rest/api/3/issue/{id} (active renewal info now includes tierType per LOC), 422 error response on mismatch, no regression on PY-12393 + PY-11947 endpoints"
+              "desc": "Human verified: plan-service API response includes tierType per LOC in ActiveRenewalInfoVO, 422 error response on tier mismatch, no regression on PY-12393 + PY-11947 endpoints"
+            },
+            {
+              "type": "test",
+              "cmd": "./gradlew :services:ai-orchestration-service:test -x generateGitProperties --tests \"*.PlanDocumentReadingPipelineTierDefaultingSpec\"",
+              "desc": "Document extraction tier defaulting: no rates + active renewal populates renewal tier, rates present skips, non-MDV skips, missing tier info skips"
             }
           ]
         },
@@ -1243,8 +1248,8 @@
           "checks": [
             {
               "type": "test",
-              "cmd": "yarn test --run src/modules/plans/medical/components/AddPlan src/modules/plans/dental/components/AddDentalPlanDialog src/modules/plans/vision/components/AddVisionPlanDialog src/modules/plans/components/DVPlanBasicInfoForm src/modules/plans/components/BasicPlanInfo/EditBasicPlanInfo src/modules/plans/components/ClonePlanModal src/modules/renewals/components/ClonePlanDropDown src/modules/renewals/components/AddOfferComponents/AddPlanConfirmModal",
-              "desc": "Save handler in each of 8 components opens TierReviewModal BEFORE BE call when mismatch detected. Save proceeds normally when no mismatch. Clone restricted to LG MDV only (SG DV does NOT trigger)."
+              "cmd": "yarn test --run src/modules/plans/medical/components/AddPlan src/modules/plans/dental/components/AddDentalPlanDialog src/modules/plans/vision/components/AddVisionPlanDialog src/modules/plans/components/Rates src/modules/plans/components/ClonePlanModal src/modules/renewals/components/ClonePlanDropDown src/modules/renewals/components/AddOfferComponents/AddPlanConfirmModal",
+              "desc": "Save handler in create components (AddPlan, AddDentalPlanDialog, AddVisionPlanDialog) and Rates.tsx opens TierReviewModal BEFORE BE call when mismatch detected. Clone restricted to LG MDV only. Save proceeds normally when no mismatch."
             },
             {
               "type": "test",
@@ -1315,7 +1320,7 @@
             {
               "type": "e2e",
               "id": 11,
-              "desc": "Upload Current Plans flow: parsed plan with mismatched tier is server-side-defaulted to renewal tier in StartRenewalSnapshotService.upsert (no FE modal, server-side defaulting per W-new-1)"
+              "desc": "Document extraction with no rates: AI extracts but rates empty, PlanDocumentReadingPipeline defaults to renewal tier. Review screen shows correct tier pre-filled. On Save, if aligned, saves normally."
             },
             {
               "type": "human",
