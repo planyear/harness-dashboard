@@ -1256,6 +1256,11 @@
             },
             {
               "type": "test",
+              "cmd": "./gradlew :services:plan-service:test -x generateGitProperties --tests \"*.TierAlignmentResourceSpec\"",
+              "desc": "Step 2b: Batch alignment API - all plans updated atomically, renewal tier synced (4 unit + 2 integration tests)"
+            },
+            {
+              "type": "test",
               "cmd": "./gradlew :services:plan-service:test -x generateGitProperties --tests \"*.TierChangeNotificationSpec\"",
               "desc": "Step 3: Producer publishes event on ER admin, not on broker admin (4 unit tests)"
             },
@@ -1296,22 +1301,19 @@
           ]
         },
         "3": {
-          "name": "Flow Integration (Vitest + MSW)",
-          "after": "fe",
-          "status": "not_started",
-          "checks": [
-            {
-              "type": "test",
-              "cmd": "yarn test --run src/modules/plans/components/__integration__/TierConsistencyFlowIntegration.test.tsx",
-              "desc": "10 Vitest integration tests: create flow (3), edit flow (2), clone flow (2), BE 422 fallback (1), BC add (1), baseline no-renewal (1). All deterministic, no human checkpoint."
-            }
-          ]
-        },
-        "4": {
           "name": "E2E Agent Verification (Playwright MCP)",
           "after": "fe",
           "status": "not_started",
           "checks": [
+            {
+              "type": "seed-data",
+              "desc": "Precondition: Seed data validated via /seed-env skill (identify gaps, inject into MongoDB, verify via Playwright MCP, write Mongock migration, restart, verify again)"
+            },
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/plans/components/__integration__/TierConsistencyFlowIntegration.test.tsx",
+              "desc": "Prerequisite: All 10 Vitest flow integration tests pass (not a standalone gate)"
+            },
             {
               "type": "e2e",
               "id": 1,
@@ -1369,14 +1371,14 @@
             }
           ]
         },
-        "5": {
+        "4": {
           "name": "Final Human Sign-off",
           "after": "fe",
           "status": "not_started",
           "checks": [
             {
               "type": "human",
-              "desc": "Review Gate 4 agent results (11/11 scenarios passed)"
+              "desc": "Review Gate 3 agent results (11/11 E2E scenarios passed)"
             },
             {
               "type": "human",
@@ -1405,6 +1407,10 @@
             {
               "type": "human",
               "desc": "Verify modal ordering: Tier Review fires before Save and Sync (PY-12393)"
+            },
+            {
+              "type": "human",
+              "desc": "Verify batch alignment API syncs renewal tier correctly"
             }
           ]
         }
