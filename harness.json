@@ -1092,7 +1092,47 @@
     {
       "id": "PY-12414",
       "phase": 2,
-      "title": "BC sync triggers",
+      "title": "{Replaced} BC sync triggers — decomposed into PY-12692/12693/12694",
+      "mode": "N/A",
+      "stream": "SR",
+      "be": null,
+      "fe": null,
+      "depends_on": [],
+      "status": "replaced",
+      "notes": "Original story refused by gap-check (complexity 810). PM split into 3 children: PY-12692 (popup + finalized guard), PY-12693 (SG sync behavior), PY-12694 (LG sync behavior). Gap reports + decisions live in epics/sr-ts-bc/task-specs/phase-2/PY-12414-bc-sync-triggers/ and the 3 child directories."
+    },
+    {
+      "id": "PY-12692",
+      "phase": 2,
+      "title": "Auto Sync: Updating Benefit Classes on a System Plan",
+      "mode": "B",
+      "stream": "SR",
+      "be": {
+        "repo": "platform",
+        "role": "implement-be",
+        "status": "not_started",
+        "assigned_to": "shanil",
+        "pr_url": null
+      },
+      "fe": {
+        "repo": "unified-portal",
+        "role": "implement-fe",
+        "status": "blocked_by_BE",
+        "assigned_to": "shanil",
+        "pr_url": null
+      },
+      "depends_on": [
+        "PY-12393",
+        "PY-12388"
+      ],
+      "spec": "epics/sr-ts-bc/task-specs/phase-2/PY-12692-bc-trigger-popup/",
+      "notes": "Replaces part of PY-12414 (popup + trigger + finalized-proposal block). Branches from task/PY-12388-be (Option B) to share ActiveRenewalInfoVO extension. Ships generalized FinalizedProposalGuard hook reused by PY-12391. Decisions B1/B2/B3 resolved — see decisions.md. Spec context at spec-context.md (on spec/PY-12692-bc-trigger-popup branch).",
+      "owner": "shanil"
+    },
+    {
+      "id": "PY-12693",
+      "phase": 2,
+      "title": "Small Group: How Benefit Classes Changes Sync to Renewal",
       "mode": "B",
       "stream": "SR",
       "be": {
@@ -1110,8 +1150,38 @@
         "pr_url": null
       },
       "depends_on": [
-        "PY-12393"
-      ]
+        "PY-12692",
+        "PY-12389"
+      ],
+      "spec": "epics/sr-ts-bc/task-specs/phase-2/PY-12693-sg-bc-sync/",
+      "notes": "Replaces part of PY-12414 (SG MEDICAL only — NYVT auto-Ideon refresh + Non-NYVT census banner). Wires BC change into existing SystemPlanSyncService.triggerIdeonReRunIfNeeded path — no new Ideon plumbing. Banner is content variant of PY-12389 shell (depends on it for shell). Decisions B1/B2/PM-G/PM-C resolved — see decisions.md. Unassigned — anyone can pick up."
+    },
+    {
+      "id": "PY-12694",
+      "phase": 2,
+      "title": "Large Group: Updating Offers and Proposals with Benefit Classes Changes",
+      "mode": "B",
+      "stream": "SR",
+      "be": {
+        "repo": "platform",
+        "role": "implement-be",
+        "status": "not_started",
+        "assigned_to": null,
+        "pr_url": null
+      },
+      "fe": {
+        "repo": "unified-portal",
+        "role": "implement-fe",
+        "status": "blocked_by_BE",
+        "assigned_to": null,
+        "pr_url": null
+      },
+      "depends_on": [
+        "PY-12692",
+        "PY-12389"
+      ],
+      "spec": "epics/sr-ts-bc/task-specs/phase-2/PY-12694-lg-bc-sync/",
+      "notes": "Replaces part of PY-12414 (LG MDV — offer enrollment update + proposal exploded-row add/remove). Path (a) chosen for B1 — exploded model only, no Same/Different mode UX (deferred to Phase 5/6 BC-02/05/06/08). Banner is content variant of PY-12389 shell. Decisions B1/B2/W6 resolved — see decisions.md. Unassigned — anyone can pick up."
     },
     {
       "id": "PY-12389",
