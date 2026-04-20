@@ -1217,14 +1217,14 @@
       "be": {
         "repo": "platform",
         "role": "implement-be",
-        "status": "not_started",
+        "status": "in_progress",
         "assigned_to": "udara",
         "pr_url": null
       },
       "fe": {
         "repo": "unified-portal",
         "role": "implement-fe",
-        "status": "not_started",
+        "status": "in_progress",
         "assigned_to": "udara",
         "pr_url": null
       },
