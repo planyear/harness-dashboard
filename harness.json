@@ -376,7 +376,7 @@
     {
       "id": "0.35",
       "phase": 0,
-      "title": "Plans module Storybook baseline \u2014 Task 6 (8 components: AddPlan, ClonePlanModal, EditBasicPlanInfo, AddPlanModal, Rates, PlansList, StartNewRenewalModal, CurrentPlanInfo)",
+      "title": "Plans module Storybook baseline — Task 6 (8 components: AddPlan, ClonePlanModal, EditBasicPlanInfo, AddPlanModal, Rates, PlansList, StartNewRenewalModal, CurrentPlanInfo)",
       "repo": "unified-portal",
       "role": "implement-fe",
       "spec": "epics/sr-ts-bc/task-specs/phase-0/0.35-plans-module-storybook-baseline/spec.md",
@@ -389,7 +389,7 @@
         "assigned_to": "shanil",
         "pr_url": "portal #107"
       },
-      "notes": "Prerequisite for PY-11947 FE. Tasks 3-5 (renewals module stories) are done. Task 6 (plans module) was never run. Without baseline stories, PY-11947 agent cannot write Tier 2 integration stories \u2014 discovered during PY-11947 FE failure analysis.",
+      "notes": "Prerequisite for PY-11947 FE. Tasks 3-5 (renewals module stories) are done. Task 6 (plans module) was never run. Without baseline stories, PY-11947 agent cannot write Tier 2 integration stories — discovered during PY-11947 FE failure analysis.",
       "priority_a": [
         "AddPlan",
         "ClonePlanModal",
@@ -473,7 +473,7 @@
             },
             {
               "type": "human",
-              "desc": "Human verified (Shanil): each component matches Figma designs \u2014 correct copy, buttons, structure, error state (red banner + red field highlights per PM-5)"
+              "desc": "Human verified (Shanil): each component matches Figma designs — correct copy, buttons, structure, error state (red banner + red field highlights per PM-5)"
             }
           ]
         },
@@ -490,11 +490,11 @@
             },
             {
               "type": "storybook",
-              "desc": "Tier 2 MSW-powered scenarios: priority chain (form\u2192renewal\u2192sync), LOC reset skip, stepper modal flow, Go Back navigation, API error fallback"
+              "desc": "Tier 2 MSW-powered scenarios: priority chain (form→renewal→sync), LOC reset skip, stepper modal flow, Go Back navigation, API error fallback"
             },
             {
               "type": "human",
-              "desc": "Human verified: wired-up flows work in sequence \u2014 right modal at right trigger, priority chain correct, Clone button dynamic re-enable (PM-2), stepper modal (PM-4)"
+              "desc": "Human verified: wired-up flows work in sequence — right modal at right trigger, priority chain correct, Clone button dynamic re-enable (PM-2), stepper modal (PM-4)"
             }
           ]
         },
@@ -507,42 +507,42 @@
             {
               "type": "e2e",
               "id": 1,
-              "desc": "New medical plan with missing premiums \u2192 MissingRenewalFieldsModal \u2192 RatesEnrollmentModal \u2192 save succeeds"
+              "desc": "New medical plan with missing premiums → MissingRenewalFieldsModal → RatesEnrollmentModal → save succeeds"
             },
             {
               "type": "e2e",
               "id": 2,
-              "desc": "New vision plan (LOC reset) with missing premiums \u2192 no validation, save proceeds normally"
+              "desc": "New vision plan (LOC reset) with missing premiums → no validation, save proceeds normally"
             },
             {
               "type": "e2e",
               "id": 3,
-              "desc": "New Basic Life plan with missing volume/rate \u2192 MissingRenewalFieldsModal with LAD fields"
+              "desc": "New Basic Life plan with missing volume/rate → MissingRenewalFieldsModal with LAD fields"
             },
             {
               "type": "e2e",
               "id": 4,
-              "desc": "Plan Library add multiple medical plans \u2192 sequential stepper modal (one plan at a time)"
+              "desc": "Plan Library add multiple medical plans → sequential stepper modal (one plan at a time)"
             },
             {
               "type": "e2e",
               "id": 5,
-              "desc": "Edit existing plan, add new BC \u2192 RatesEnrollmentModal with BC collapsible sections"
+              "desc": "Edit existing plan, add new BC → RatesEnrollmentModal with BC collapsible sections"
             },
             {
               "type": "e2e",
               "id": 6,
-              "desc": "Clone plan to year with active renewal \u2192 warning + disabled button; switch to year without renewal \u2192 re-enabled"
+              "desc": "Clone plan to year with active renewal → warning + disabled button; switch to year without renewal → re-enabled"
             },
             {
               "type": "e2e",
               "id": 7,
-              "desc": "Benefit Guide clone during active renewal \u2192 CloneUnavailableModal"
+              "desc": "Benefit Guide clone during active renewal → CloneUnavailableModal"
             },
             {
               "type": "e2e",
               "id": 8,
-              "desc": "Change effective date to year with active renewal \u2192 MissingRenewalFieldsModal"
+              "desc": "Change effective date to year with active renewal → MissingRenewalFieldsModal"
             },
             {
               "type": "human",
@@ -575,7 +575,7 @@
       },
       "spec": "epics/sr-ts-bc/task-specs/phase-1/PY-11947-add-plan-validations/fe-part-a.md",
       "depends_on": [],
-      "notes": "Shared components, hook, types. Gate 2 (Component Storybook review). 0.35 not required \u2014 Part A uses Tier 1 (prop-driven) stories only.",
+      "notes": "Shared components, hook, types. Gate 2 (Component Storybook review). 0.35 not required — Part A uses Tier 1 (prop-driven) stories only.",
       "status": "merged"
     },
     {
@@ -810,7 +810,7 @@
             {
               "type": "test",
               "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/MDVRates src/modules/renewals/components/StartNewRenewalModal/components/CurrentPlanInfo",
-              "desc": "MDVRates imports from shared file \u2014 MDVRates + CurrentPlanInfo tests pass (only consumer)"
+              "desc": "MDVRates imports from shared file — MDVRates + CurrentPlanInfo tests pass (only consumer)"
             },
             {
               "type": "test",
@@ -830,12 +830,12 @@
             {
               "type": "test",
               "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/RatesEnrollmentModal/RatesEnrollmentModal.test",
-              "desc": "Done validates rates \u2014 blocks if incomplete"
+              "desc": "Done validates rates — blocks if incomplete"
             },
             {
               "type": "test",
               "cmd": "yarn test --run src/modules/renewals/components/StartNewRenewalModal/components/RatesEnrollmentModal/RatesEnrollmentModal.test",
-              "desc": "Done validates enrollment \u2014 blocks if incomplete"
+              "desc": "Done validates enrollment — blocks if incomplete"
             },
             {
               "type": "test",
@@ -1525,8 +1525,8 @@
       "be": {
         "repo": "platform",
         "role": "implement-be",
-        "status": "not_started",
-        "assigned_to": null,
+        "status": "in_progress",
+        "assigned_to": "shanil",
         "pr_url": null
       },
       "fe": {
@@ -1538,7 +1538,138 @@
       },
       "depends_on": [
         "PY-12330"
-      ]
+      ],
+      "gates": {
+        "1": {
+          "name": "API Contract Validation",
+          "after": "be",
+          "status": "not_started",
+          "checks": [
+            {
+              "type": "test",
+              "cmd": "./gradlew :services:plan-service:test -x generateGitProperties --tests \"*.TaxAdvantageAccountsDissociationIntegrationSpec\"",
+              "desc": "Integration test: tier change dissociation, save clears, same-tier no-op (3 tests)"
+            },
+            {
+              "type": "test",
+              "cmd": "./gradlew :services:plan-service:test -x generateGitProperties --tests \"*.TaxAdvantageAccountsPlanServiceSpec\"",
+              "desc": "Unit tests: removeMDVPlanReference + removeHSAReference dissociation recording (5 tests)"
+            },
+            {
+              "type": "test",
+              "cmd": "./gradlew :services:plan-service:test -x generateGitProperties --tests \"*.PlanWrapperServiceSpec\"",
+              "desc": "Unit tests: removeHraHsaFlagIfTierChanged passes plan name (3 tests)"
+            },
+            {
+              "type": "human",
+              "desc": "Human reviews HTTP response JSON: dissociatedPlans array with { planId, planName, benefitCategory }. Confirms empty after save."
+            }
+          ]
+        },
+        "2": {
+          "name": "HSA Contribution Grid Visual",
+          "after": "fe",
+          "status": "not_started",
+          "checks": [
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/plans/taxAdvantaged/components/HSAPlanInformation",
+              "desc": "HSA dynamic contribution grid: N-Tier 2/3/5, STD4, no selection, label check (5 tests)"
+            },
+            {
+              "type": "human",
+              "desc": "Checkpoint: HSA grid adapts to tier type (N-Tier 2 -> EE+EE+1, STD4 -> EE/ES/EC/EF)"
+            },
+            {
+              "type": "human",
+              "desc": "Cross-tier validation: mixed tiers -> OK disabled + tooltip shown"
+            }
+          ]
+        },
+        "3": {
+          "name": "Dissociation Warning Visual",
+          "after": "fe",
+          "status": "not_started",
+          "checks": [
+            {
+              "type": "storybook",
+              "desc": "HRAEditWithDissociationWarning, HSAEditWithDissociationWarning, HRAEditNoDissociation stories render"
+            },
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/plans/taxAdvantaged/components/AddTaxAdvantagedPlan",
+              "desc": "Dissociation warning banner: show/hide, plan links, closeable (4 tests)"
+            },
+            {
+              "type": "human",
+              "desc": "Pixel-diff + checkpoint: yellow warning (#fefbf4 bg, #f9c747 border), plan names as bold blue links (#317ad0)"
+            }
+          ]
+        },
+        "4": {
+          "name": "Premiums Edit Modal Visual",
+          "after": "fe",
+          "status": "not_started",
+          "checks": [
+            {
+              "type": "storybook",
+              "desc": "MedicalPremiumsEditWithHsaWarning, BothWarnings, DentalHra, VisionHra, NoWarning stories render"
+            },
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/plans/components/Rates",
+              "desc": "HSA warning medical, HRA warning dental/vision, both simultaneous (6 tests)"
+            },
+            {
+              "type": "human",
+              "desc": "Checkpoint: HSA warning text, View Plan link, both warnings visible when applicable"
+            }
+          ]
+        },
+        "5": {
+          "name": "End-to-End + Offer Impact",
+          "after": "fe",
+          "status": "not_started",
+          "checks": [
+            {
+              "type": "e2e",
+              "desc": "E2E 1: HSA cross-tier block (MetroNY STD4 + N_TIER 3)"
+            },
+            {
+              "type": "e2e",
+              "desc": "E2E 2b: HSA dynamic contribution grid switch"
+            },
+            {
+              "type": "e2e",
+              "desc": "E2E 3-4: Medical tier change -> HRA dissociation -> save clears warning"
+            },
+            {
+              "type": "e2e",
+              "desc": "E2E 5-6: HSA + dual HRA+HSA warnings in Premiums Edit"
+            },
+            {
+              "type": "e2e",
+              "desc": "E2E 7: HRA warning on dental tier change"
+            },
+            {
+              "type": "e2e",
+              "desc": "E2E 8 (V11): Full dissociation -> proposal contribution shows /bin/zsh"
+            },
+            {
+              "type": "e2e",
+              "desc": "E2E 9 (V12): Partial dissociation -> proposal contribution unchanged"
+            },
+            {
+              "type": "e2e",
+              "desc": "E2E 10 (V13): Finalized proposal unaffected by dissociation"
+            },
+            {
+              "type": "human",
+              "desc": "Human verified: all E2E scenarios pass on running system with seed data"
+            }
+          ]
+        }
+      }
     },
     {
       "id": "PY-12394",
