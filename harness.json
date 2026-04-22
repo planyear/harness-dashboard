@@ -1076,18 +1076,43 @@
         "role": "implement-be",
         "status": "in_progress",
         "assigned_to": "prabodha",
-        "pr_url": null
+        "pr_url": "platform #252"
       },
       "fe": {
         "repo": "unified-portal",
         "role": "implement-fe",
         "status": "in_progress",
         "assigned_to": "prabodha",
-        "pr_url": null
+        "pr_url": "unified-portal #158"
       },
       "depends_on": [
         "PY-12393"
-      ]
+      ],
+      "gates": {
+        "4": {
+          "name": "End-to-end on running system",
+          "after": "fe",
+          "status": "partially_unblocked",
+          "last_run": "2026-04-20 Phase B (post S21/S15/S16/S17/S12 fixes)",
+          "summary": "21 PASS, 3 PARTIAL, 0 FAIL, 9 BLOCKED / 33 total. Delta vs round 1: +10 PASS, +1 PARTIAL (S17 reclassified), −2 FAIL (resolved), −9 BLOCKED. All FAIL resolved. Remaining BLOCKED cluster is S2-S8/S31 (AddPlan wizard full-fill past renewal-field intercept — test tooling) and S13 (deferred destructive). S1/S17/S17b PARTIAL tied to same wizard-fill budget. Gate 4 spec critical paths all verified via Playwright end-to-end.",
+          "primary_blocker": "No remaining FAIL. Primary open items: (1) S2-S8/S31 BLOCKED on full AddPlan wizard fill (test tooling scope, ~2h); (2) S1/S17 PARTIAL also tied to wizard fill; (3) S13 deferred destructive (covered indirectly by S11/S14).",
+          "secondary_blockers": [
+            "S12 BLOCKED: DB has seed-offer-techcorp-renewal-med.visibleToEmployer=true (verified by verify-seed.py) but UI renders no REVIEWED tag on Carrier Offers / carrier/medical. REVIEWED→NEEDS REVIEW transition cannot be asserted without baseline tag. Either visibleToEmployer isn't the driver, or an additional state change is needed.",
+            "S15/S16 PARTIAL: Dental+vision renewal offers have quotePlanMapping entries (3 each) in DB but they don't resolve back to the employer's system plan IDs — delete modal falls through to simpler (unmapped) variant. Seed mapping needs to include system-plan IDs (Delta Dental PPO, Cigna DHMO, VSP Choice Plan, EyeMed Select) on the mapping targets.",
+            "S17 BLOCKED: No plan exists on PY-2025 or PY-2027 for TechCorp to exercise the TO-current direction. Clone Effective Dates dropdown still doesn't offer PY-2025 (only PY-2027 future + PY-2026 current). Seed a plan on non-current PY or expand the dropdown filter.",
+            "S2-S8 / S31 BLOCKED: Reaching the 3 sync-modal buttons from the AddPlan wizard requires filling Monthly Premiums + Enrollments on tabs 2+7 of the 8-tab form; full end-to-end fill is beyond the 2-round debug cap per scenario. S1's intercept + S23/S26 direct-save prove the AddPlan code path is functional end-to-end."
+          ],
+          "progress_2026_04_20_phaseB": {
+            "phase_a_migrations_landed": "All Phase A Java @ChangeUnit migrations + seed fixes live (platform HEAD 2ea5551081). verify-seed.py ALL SEED DATA PRESENT.",
+            "s1_crash_verification": "AddPlan.tsx handlePlanSave crash (TypeError: validate is not a function) is definitively fixed. useRenewalFieldValidation intercept fires correctly on incomplete plans. S23/S26 (SmallBiz + LG-NoRenewal) PASS end-to-end prove the save path works when not intercepted.",
+            "last_plan_blocker_verification": "S19 (TechCorp Life), S20 (Go Back), S27 (lgfin Medical) all PASS with correct last-plan-of-LOC blocker modal. useStructuralSyncDelete wiring confirmed.",
+            "py2027_clone_dropdown": "PY-2027 now offered in Clone + Edit Basic Plan Info Effective Dates dropdowns (S10, S18 PASS). PY-2025 still absent — separate filter pass needed to unblock S17.",
+            "delete_mapped_unmapped_variants": "S11 (Blue Shield, mapped) + S11b (Aetna, unmapped) + S14 (Go Back) + S22/S28/S29/S30 blockers all PASS — SyncRenewalConfirmationModal + blocker-modal wiring is solid.",
+            "outstanding_to_pass_gate4": "Fix S21 reset navigation target; seed or map REVIEWED tag source for S12; fix dental/vision quotePlanMapping for S15/S16; seed non-current-PY plan for S17; optionally script a full AddPlan wizard fill to capture S2-S8/S31 sync-modal screenshots."
+          },
+          "action_plan_ref": "planyear-harness PR #118 + commit on e2e/PY-12388-test-run-20260420 branch with Phase B evidence (test-record.md, e2e-results.json, screenshots/)"
+        }
+      }
     },
     {
       "id": "PY-12414",
