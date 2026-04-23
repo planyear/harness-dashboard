@@ -1642,19 +1642,21 @@
       "be": {
         "repo": "platform",
         "role": "implement-be",
-        "status": "in_progress",
+        "status": "in_review",
         "assigned_to": "shanil",
-        "pr_url": null
+        "pr_url": "https://github.com/planyear/platform/pull/260"
       },
       "fe": {
         "repo": "unified-portal",
         "role": "implement-fe",
-        "status": "not_started",
-        "assigned_to": null,
-        "pr_url": null
+        "status": "in_review",
+        "assigned_to": "shanil",
+        "pr_url": "https://github.com/planyear/unified-portal/pull/166"
       },
       "depends_on": [
-        "PY-12330"
+        "PY-12330",
+        "PY-12388",
+        "PY-12692"
       ],
       "gates": {
         "1": {
@@ -1770,15 +1772,15 @@
             },
             {
               "type": "e2e",
-              "desc": "E2E 8 (V11): Full dissociation -> proposal contribution shows /bin/zsh"
+              "desc": "E2E 8 (V11): Full dissociation -> proposal contribution shows $0 [BLOCKED: depends on plan sync story PY-12692]"
             },
             {
               "type": "e2e",
-              "desc": "E2E 9 (V12): Partial dissociation -> proposal contribution unchanged"
+              "desc": "E2E 9 (V12): Partial dissociation -> proposal contribution unchanged [BLOCKED: depends on plan sync story PY-12692]"
             },
             {
               "type": "e2e",
-              "desc": "E2E 10 (V13): Finalized proposal unaffected by dissociation"
+              "desc": "E2E 10 (V13): Finalized proposal unaffected by dissociation [BLOCKED: depends on plan sync story PY-12692]"
             },
             {
               "type": "human",
