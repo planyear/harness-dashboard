@@ -1074,16 +1074,16 @@
       "be": {
         "repo": "platform",
         "role": "implement-be",
-        "status": "in_progress",
+        "status": "merged",
         "assigned_to": "prabodha",
-        "pr_url": "platform #252"
+        "pr_url": "https://github.com/planyear/platform/pull/252"
       },
       "fe": {
         "repo": "unified-portal",
         "role": "implement-fe",
-        "status": "in_progress",
+        "status": "merged",
         "assigned_to": "prabodha",
-        "pr_url": "unified-portal #158"
+        "pr_url": "https://github.com/planyear/unified-portal/pull/158"
       },
       "depends_on": [
         "PY-12393"
