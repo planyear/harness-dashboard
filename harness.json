@@ -24,6 +24,12 @@
       "machine": "16GB",
       "email": "shanil.silva@planyear.com",
       "slack_user_id": "U09KA8BP88N"
+    },
+    "pavani": {
+      "stream": "A",
+      "machine": "16GB",
+      "email": "pavani@planyear.com",
+      "slack_user_id": "U061NDGNPFY"
     }
   },
   "phases": {
@@ -1279,27 +1285,28 @@
     {
       "id": "PY-12334",
       "phase": 2,
-      "title": "Tier consistency",
+      "title": "Tier consistency guardrail",
       "mode": "A",
       "stream": "TS",
       "be": {
         "repo": "platform",
         "role": "implement-be",
         "status": "not_started",
-        "assigned_to": "udara",
+        "assigned_to": "pavani",
         "pr_url": null
       },
       "fe": {
         "repo": "unified-portal",
         "role": "implement-fe",
         "status": "not_started",
-        "assigned_to": "udara",
+        "assigned_to": "pavani",
         "pr_url": null
       },
       "depends_on": [
         "PY-12330",
         "PY-12331",
-        "PY-12422"
+        "PY-12422",
+        "PY-12393"
       ],
       "gates": {
         "1": {
@@ -1310,61 +1317,67 @@
             {
               "type": "test",
               "cmd": "./gradlew :services:renewal-service:test -x generateGitProperties --tests \"*.StartRenewalSnapshotTransformerSpec\"",
-              "desc": "Step 1: RenewalInfoVO.tierType populated correctly per benefitCategory (3 unit tests)"
+              "desc": "Step 1: RenewalInfoVO.tierType populated correctly per benefitCategory (3 unit tests + 1 integration)"
             },
             {
               "type": "test",
               "cmd": "./gradlew :services:plan-service:test -x generateGitProperties --tests \"*.TierMismatchValidationSpec\"",
-              "desc": "Step 2: TierMismatchException thrown/not-thrown correctly (4 unit tests)"
+              "desc": "Step 2: TierMismatchException thrown/not-thrown correctly (5 unit tests + 6 integration tests — covers LG MEDICAL 422, LG DENTAL 422, LG VISION 422, no-renewal pass, SG MEDICAL excluded for both SG subtypes)"
             },
             {
               "type": "test",
               "cmd": "./gradlew :services:plan-service:test -x generateGitProperties --tests \"*.MedicalResourceSpec\" --tests \"*.DentalResourceSpec\" --tests \"*.VisionResourceSpec\" --tests \"*.MedicalLibraryPlanResourceSpec\" --tests \"*.DentalLibraryPlanResourceSpec\" --tests \"*.VisionPlanLibraryResourceSpec\"",
-              "desc": "Step 2 R6: All 6 resources return HTTP 422 on mismatched tier"
-            },
-            {
-              "type": "test",
-              "cmd": "./gradlew :services:plan-service:test -x generateGitProperties --tests \"*.TierAlignmentResourceSpec\"",
-              "desc": "Step 2b: Batch alignment API - all plans updated atomically, renewal tier synced (4 unit + 2 integration tests)"
-            },
-            {
-              "type": "test",
-              "cmd": "./gradlew :services:plan-service:test -x generateGitProperties --tests \"*.TierChangeNotificationSpec\"",
-              "desc": "Step 3: Producer publishes event on ER admin, not on broker admin (4 unit tests)"
-            },
-            {
-              "type": "test",
-              "cmd": "./gradlew :services:communication-service:test -x generateGitProperties --tests \"*.TierChangeNotificationConsumerSpec\"",
-              "desc": "Step 3: Consumer deserializes event, template renders, SES mocked (3 tests)"
+              "desc": "Step 2 R6: All 6 resources return HTTP 422 on mismatched tier — POST and PUT. DentalResource + DentalLibraryPlanResource (dental mismatch); VisionResource + VisionPlanLibraryResource (vision mismatch); MedicalLibraryPlanResource (medical mismatch). MedicalResource covered by V4."
             },
             {
               "type": "test",
               "cmd": "./gradlew :services:ai-orchestration-service:test -x generateGitProperties --tests \"*.PlanDocumentReadingPipelineSpec\"",
-              "desc": "Step 4: Document extraction tier defaulting (4 unit tests)"
+              "desc": "Step 3: Document extraction tier defaulting (4 unit tests)"
+            },
+            {
+              "type": "http",
+              "desc": "V3: GET /v1/renewals/system-plan-sync/active-renewal-info returns tierType for MEDICAL, DENTAL, VISION (3 checks)"
+            },
+            {
+              "type": "http",
+              "desc": "V4: POST and PUT medical plan with mismatched premiumType (N_TIER vs FOUR_TIER renewal) → 422 with exact C2 payload on both verbs (edit plan rates is a PUT; create is a POST)"
+            },
+            {
+              "type": "http",
+              "desc": "V7: SG Medical exclusion live check — POST and PUT medical plan with mismatched premiumType on SG employer (renewalType=SMALL_GROUP_NON_NY_VT) → 200 (no 422; guardrail does not apply to SG Medical)"
             },
             {
               "type": "human",
-              "desc": "Human checkpoint: spec-vs-actual contract comparison (gate1-spec-vs-actual.txt). Verify C1 tierType field, C2 422 response, C3 event payload all match spec shapes. Approve to unblock FE."
+              "desc": "Human checkpoint: spec-vs-actual contract comparison (gate1-spec-vs-actual.txt). Verify C1 tierType field and C2 422 response match spec shapes. Approve to unblock FE."
             }
           ]
         },
         "2": {
-          "name": "FE Modal Components, Visual Fidelity",
+          "name": "FE Premium Type Lockdown",
           "after": "fe",
           "status": "not_started",
           "checks": [
             {
               "type": "test",
-              "cmd": "yarn test --run src/modules/plans/components/TierReviewModal src/modules/plans/hooks/useTierMismatchCheck",
-              "desc": "Step 5+6: 14 Vitest tests (8 modal + 6 hook) all pass"
+              "cmd": "yarn test --run src/modules/plans/utils/premiumTypeLockdown",
+              "desc": "Step 4: 4 Vitest tests for getPremiumTypeLockdown helper + getDefaultPlanRates"
+            },
+            {
+              "type": "test",
+              "cmd": "yarn test --run src/modules/plans/medical/components/AddPlan src/modules/plans/dental/components/AddDentalPlanDialog src/modules/plans/vision/components/AddVisionPlanDialog src/modules/plans/components/Rates",
+              "desc": "8 unit + 14 component Vitest tests (includes LG/SG scope tests, non-current plan year regression, UPDATE_SYSTEM_PLAN field hidden, CREATE_SYSTEM_PLAN shown+locked, SG DV locked, DBG view, and warning banner assertions)"
+            },
+            {
+              "type": "playwright",
+              "desc": "Playwright MCP visual spot-check on 13 states: (1) medical add LG locked+banner; (2) Rates edit medical locked+banner; (3) Rates edit dental locked+banner; (4) Rates edit vision locked+banner; (5) dental add LG locked+banner; (6) vision add LG locked+banner; (7) plan library import locked+banner; (8) BC add/plan-year-change RatesEnrollmentModalContent locked+banner; (9) medical add no renewal → editable no banner; (10) UPDATE_SYSTEM_PLAN field hidden (no regression); (11) DBG view locked+banner; (12) CREATE_SYSTEM_PLAN shown+locked+banner; (13) SG dental+vision locked, SG medical editable"
             },
             {
               "type": "storybook",
-              "desc": "3 Storybook stories load without errors: TierReviewMismatched, TierReviewAllAligned, TierReviewAfterEdit. Elements match spec (tier tags, buttons, data-testid values)."
+              "desc": "Stories load for each flow in active-renewal and no-renewal variants; data-testid \"premium-type\" present on each; no console errors"
             },
             {
               "type": "human",
-              "desc": "Human checkpoint: 3 pixel-diff comparisons (Figma vs Storybook). Gate 2.1: mismatched state vs 118338:36024. Gate 2.2: aligned state vs 118338:36024. Gate 2.3: edit state vs 118338:36087. Approve visual fidelity."
+              "desc": "Human checkpoint: 13 Playwright screenshots side-by-side. Approve: medical/dental/vision add+edit locked with yellow banner; library import locked; BC add modal locked; no-renewal editable; UPDATE_SYSTEM_PLAN field hidden; DBG locked; CREATE_SYSTEM_PLAN shown+locked; SG dental+vision locked, SG medical editable."
             }
           ]
         },
@@ -1375,67 +1388,77 @@
           "checks": [
             {
               "type": "seed-data",
-              "desc": "Precondition: Seed data validated via /seed-env skill (identify gaps, inject into MongoDB, verify via Playwright MCP, write Mongock migration, restart, verify again)"
-            },
-            {
-              "type": "test",
-              "cmd": "yarn test --run src/modules/plans/components/__integration__/TierConsistencyFlowIntegration.test.tsx",
-              "desc": "Prerequisite: All 10 Vitest flow integration tests pass (not a standalone gate)"
+              "desc": "Precondition: Seed env started. Required data: (1) seed-employer-techcorp (LG, renewalType=LARGE_GROUP) with active MDV renewal (medicalTierType=FOUR_TIER, dentalTierType+visionTierType also set), >=1 medical/dental/vision plan on current plan year, plus >=1 medical, >=1 dental, and >=1 vision plan on a future plan year (for E2E #12 — MDV all), and at least 1 Life or Voluntary plan type available to add (for E2E #13); (2) SG employer (seed as renewalType=SMALL_GROUP_NON_NY_VT; rule applies equally to SMALL_GROUP_NY_VT) with active DENTAL + VISION renewal (dentalTierType=TWO_TIER, visionTierType also set) and >=1 dental plan + >=1 vision plan + >=1 medical plan (for E2E #11 SG DV locked on dental+vision + SG medical excluded checks). Seed users already exist via BrokerEmployerLoginSeedDataMigration."
             },
             {
               "type": "e2e",
               "id": 1,
-              "desc": "ER admin create medical with mismatched tier: modal opens, align, save, email sent"
+              "desc": "Create medical plan, active renewal: Premium Type dropdown disabled, value = FOUR_TIER, plan saves"
             },
             {
               "type": "e2e",
               "id": 2,
-              "desc": "Broker admin edit dental with mismatched tier: modal opens, align, save, NO email"
+              "desc": "Edit medical plan Rates form, active renewal: Premium Type read-only, value matches renewal tier"
             },
             {
               "type": "e2e",
               "id": 3,
-              "desc": "Plan library import with mismatched tier: modal opens, align, save"
+              "desc": "Create dental plan, active renewal: Premium Type read-only, value matches renewal dentalTierType (dental entry point)"
             },
             {
               "type": "e2e",
               "id": 4,
-              "desc": "Clone LG MDV with mismatch: modal opens. SG DV: no modal (W3)"
+              "desc": "Create medical plan, no active renewal: Premium Type editable, any tier choosable, saves (regression)"
             },
             {
               "type": "e2e",
               "id": 5,
-              "desc": "Direct API POST with mismatched tier: HTTP 422 TIER_MISMATCH"
+              "desc": "Direct API call bypassing FE — POST and PUT: (a) curl POST /v1/plans/medical with mismatched premiumType → HTTP 422 with C2 payload (create path); (b) curl PUT /v1/plans/medical/{id} with mismatched premiumType on an existing plan → HTTP 422 with C2 payload (edit plan rates path)"
             },
             {
               "type": "e2e",
               "id": 6,
-              "desc": "TierReviewModal Cancel: modal closes, save abandoned"
+              "desc": "Plan library import, active renewal: Premium Type in import review is read-only and matches renewal tier; on save, plan stored at renewal's tier"
             },
             {
               "type": "e2e",
               "id": 7,
-              "desc": "Vision create broker admin with mismatch: modal opens, validates VisionResource 422"
+              "desc": "BC add / plan year change (future to current), active renewal: RatesEnrollmentModalContent Premium Type field is read-only and pre-selected to renewal tier"
             },
             {
               "type": "e2e",
               "id": 8,
-              "desc": "Plan library happy path (matched tier): no modal, saves directly"
+              "desc": "Update plan parameter flow (doc extraction review): AddPlanModal is opened with docExtractionSource prop set (source=UPDATE_SYSTEM_PLAN, planId, planName) by the caller — isFromUpdatePan=!isEmpty(docExtractionSource)=true — hidePremiumType={isFromUpdatePan}=true — field hidden. Out of scope for lockdown, no FE change needed."
             },
             {
               "type": "e2e",
               "id": 9,
-              "desc": "Add benefit classes triggers modal (W4)"
+              "desc": "DBG (Benefit Guide) plan edit, active renewal: Premium Type read-only, shows renewal tier, warning banner above it"
             },
             {
               "type": "e2e",
               "id": 10,
-              "desc": "Modal ordering: Tier Review before Save and Sync (PY-12393)"
+              "desc": "CREATE_SYSTEM_PLAN doc extraction, active renewal: Premium Type IS shown (docExtractionSource not set in AddPlan for this flow → isFromUpdatePan=false), disabled, value = renewal tier, warning banner above it. Standard getPremiumTypeLockdown wiring covers this path — no hidePremiumType change needed."
             },
             {
               "type": "e2e",
               "id": 11,
-              "desc": "Document extraction no rates: pipeline defaults to renewal tier, review screen shows correct tier"
+              "desc": "SG employer (seed as renewalType=SMALL_GROUP_NON_NY_VT; rule applies equally to SMALL_GROUP_NY_VT — both excluded via != LARGE_GROUP check) with active DENTAL + VISION renewal (dentalTierType=TWO_TIER, visionTierType also set): (a) add dental plan → Premium Type disabled, value=TWO_TIER, banner visible; (b) add vision plan → Premium Type disabled, value=renewal visionTierType, banner visible (SG DV applies to vision); (c) add medical plan for same SG employer → Premium Type editable, no banner (SG Medical excluded for both SMALL_GROUP_NY_VT and SMALL_GROUP_NON_NY_VT)"
+            },
+            {
+              "type": "e2e",
+              "id": 12,
+              "desc": "Multi-plan-year MDV — current PY locked, future PY editable: LG employer with active MDV renewal (FOUR_TIER). (a) Add Plan > Medical, select current plan year → Premium Type locked, banner visible. (b) Switch plan year selector to future plan year in the same form → Premium Type immediately editable, banner disappears (reactive lockdown). (c) Repeat for dental. (d) Edit an existing medical plan on the future plan year → Premium Type editable, no banner. Confirms isPlanYearCurrent reactive logic; guardrail does not bleed across plan years."
+            },
+            {
+              "type": "e2e",
+              "id": 13,
+              "desc": "Non-MDV plans (Life/Voluntary) with active MDV renewal: Same LG employer with active MDV renewal. (a) Add a Life plan → no Premium Type field rendered; form saves without error; no banner. (b) curl POST /v1/plans/life (or Voluntary equivalent) with any premiumType → no 422 (non-MDV resources excluded from BE validator). Confirms Non-MDV Out of Scope rule holds at both FE and BE."
+            },
+            {
+              "type": "e2e",
+              "id": 14,
+              "desc": "Create vision plan, active renewal: LG employer with active VISION renewal (visionTierType set). Add Plan > Vision. Premium Type dropdown is disabled, value matches renewal visionTierType, warning banner visible. Plan saves successfully. Confirms vision create entry point is covered alongside medical (#1) and dental (#3)."
             }
           ]
         },
@@ -1446,44 +1469,39 @@
           "checks": [
             {
               "type": "human",
-              "desc": "Review Gate 3 agent results (11/11 E2E scenarios passed)"
+              "desc": "Review Gate 3 agent results (14/14 E2E scenarios passed)"
             },
             {
               "type": "human",
-              "desc": "Spot-check: ER admin create with mismatch -> modal -> align -> save -> email received"
+              "desc": "Spot-check: Premium Type read-only with yellow warning banner across LG MDV + SG DV entry points when renewal active (LG: medical create, dental create, vision create, Rates edit, BC add/plan-year-change modal, doc extraction CREATE flow, DBG plan edit; SG: dental + vision)"
             },
             {
               "type": "human",
-              "desc": "Spot-check: broker admin edit -> modal -> align -> save -> NO email"
+              "desc": "Spot-check: SG Medical is NOT locked — Premium Type editable even when SG employer has an active renewal"
             },
             {
               "type": "human",
-              "desc": "Spot-check: plan library import -> default tier applied"
+              "desc": "Spot-check: no regressions in plan create/edit flows when no renewal exists"
             },
             {
               "type": "human",
-              "desc": "Spot-check: Cancel flow -> save abandoned"
+              "desc": "Spot-check: curl POST and PUT /v1/plans/medical (LG employer) with mismatched premiumType returns HTTP 422 with the C2 payload. Confirm same curl for SG employer returns 200 (not 422)."
             },
             {
               "type": "human",
-              "desc": "Verify no regressions in existing plan flows (create/edit/delete without active renewal)"
+              "desc": "Confirm migration scope is properly routed to PY-12729 (no migration UX accidentally built into PY-12334)"
             },
             {
               "type": "human",
-              "desc": "Verify Tier Review modal Dust Red matches Figma (W1)"
-            },
-            {
-              "type": "human",
-              "desc": "Verify modal ordering: Tier Review fires before Save and Sync (PY-12393)"
-            },
-            {
-              "type": "human",
-              "desc": "Verify batch alignment API syncs renewal tier correctly"
+              "desc": "Spot-check: update plan parameter (UPDATE_SYSTEM_PLAN) flow. Premium Type field stays hidden (docExtractionSource prop set when modal opens → isFromUpdatePan=true → hidePremiumType={isFromUpdatePan}=true — out of scope for lockdown; no regression introduced)"
             }
           ]
         }
       },
-      "owner": "udara"
+      "owner": "pavani",
+      "blocks": [
+        "PY-12729"
+      ]
     },
     {
       "id": "PY-12729",
